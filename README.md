@@ -1,11 +1,41 @@
-# promise-flow
+<h1 align="center">
+   <b>
+      <img src="assets/promise-vigilant.png" alt="promise-vigilant logo" style="height: 500px; width:500px; border-radius: 50px;"/><br>
+   </b>
+</h1>
 
-메서드 체인에서 일련의 콜백 함수를 실행할 수 있는 비동기 함수입니다.
+<p align="center">메서드 체인에서 일련의 콜백 함수를 실행할 수 있는 비동기 함수</p>
 
-## Installation
+## 목차
 
+- [Installing](#installing)
+  - [Package manager](#package-manager)
+  - [CDN](#cdn)
+- [Usage](#Usage)
+- [Example](#example)
+
+## Installing
+
+### Package manager
+
+Using npm:
+
+```bash
+$ npm install promise-vigilant
 ```
-npm install promise-vigilant
+
+Using yarn:
+
+```bash
+$ yarn add promise-vigilant
+```
+
+### CDN
+
+Using unpkg CDN:
+
+```html
+<script src="https://unpkg.com/promise-vigilant@1.0.0/dist/index.js"></script>
 ```
 
 ## Usage
@@ -37,6 +67,79 @@ vigilAsync(placeId, [getPlaceDetailResult, createAddress], {
 ### Return Value
 
 체인에서 마지막 프로미스의 결과를 반환하는 Promise 객체입니다.
+
+## Example
+
+Without **promise-vigilant**
+
+```ts
+import axios from 'axios';
+
+async function saveUserData() {
+  try {
+    const users = await axios({
+      method: 'get',
+      url: 'https://jsonplaceholder.typicode.com/users',
+    });
+
+    const userIds = users.data.map((data) => data.id);
+
+    const userPostPromise = userIds.map((id) =>
+      axios({
+        method: 'get',
+        url: `https://jsonplaceholder.typicode.com/posts/${id}`,
+      })
+    );
+
+    const userPost = await Promise.all(userPostPromise);
+
+    const userPostTitle = userPost.map(({ data }) => data.title);
+
+    saveDB(userPostTitle);
+  } catch (error) {
+    sendReport(error);
+  } finally {
+    changeLoadingState();
+  }
+}
+```
+
+With **promise-vigilant**
+
+```ts
+const getUserIds = ({ data }) => data.map((user) => user.id);
+
+const getPostTitle = (post) => post.map(({ data }) => data.title);
+
+const requestUserList = () => {
+  return axios({
+    method: 'get',
+    url: 'https://jsonplaceholder.typicode.com/users',
+  });
+};
+
+const setPostPromise = (ids) =>
+  ids.map((id) => {
+    return axios<Post>({
+      method: 'get',
+      url: `https://jsonplaceholder.typicode.com/posts/${id}`,
+    });
+  });
+
+const requestUserPost = (userPostPayload: Promise<Post>[]) =>
+  Promise.all(userPostPayload);
+
+function saveUserData() {
+  vigilAsync(
+    requestUserList,
+    [getUserIds, setPostPromise, requestUserPost, getPostTitle, saveDB],
+    {
+      onError: (error) => sendReport(error),
+      onSuccess: () => changeLoadingState(),
+    }
+  );
+}
+```
 
 ## License
 
