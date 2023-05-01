@@ -20,7 +20,6 @@
     "dist",
     "LICENSE",
     "README.md",
-    "README-ko_KR.md",
     "package.json"
   ],
   "private": false,
