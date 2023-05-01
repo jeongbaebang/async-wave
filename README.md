@@ -6,7 +6,7 @@
 
 <p align="center">메서드 체인에서 일련의 콜백 함수를 안전하게 실행할 수 있는 비동기 함수</p>
 
-## 목차
+## Table of Contents
 
 - [Installing](#installing)
   - [Package manager](#package-manager)
@@ -74,6 +74,7 @@ Without **promise-vigilant**
 
 ```ts
 import axios from 'axios';
+import vigilAsync from 'promise-vigilant';
 
 async function saveUserData() {
   try {
@@ -81,18 +82,14 @@ async function saveUserData() {
       method: 'get',
       url: 'https://jsonplaceholder.typicode.com/users',
     });
-
     const userIds = users.data.map((data) => data.id);
-
     const userPostPromise = userIds.map((id) =>
       axios({
         method: 'get',
         url: `https://jsonplaceholder.typicode.com/posts/${id}`,
       })
     );
-
     const userPost = await Promise.all(userPostPromise);
-
     const userPostTitle = userPost.map(({ data }) => data.title);
 
     saveDB(userPostTitle);
@@ -108,16 +105,13 @@ With **promise-vigilant**
 
 ```ts
 const getUserIds = ({ data }) => data.map((user) => user.id);
-
 const getPostTitle = (post) => post.map(({ data }) => data.title);
-
 const requestUserList = () => {
   return axios({
     method: 'get',
     url: 'https://jsonplaceholder.typicode.com/users',
   });
 };
-
 const setPostPromise = (ids) =>
   ids.map((id) => {
     return axios<Post>({
@@ -125,7 +119,6 @@ const setPostPromise = (ids) =>
       url: `https://jsonplaceholder.typicode.com/posts/${id}`,
     });
   });
-
 const requestUserPost = (userPostPayload: Promise<Post>[]) =>
   Promise.all(userPostPayload);
 
