@@ -4,8 +4,7 @@
    </b>
 </h1>
 
-<p align="center">메서드 체인에서 일련의 콜백 함수를 실행할 수 있는 비동기 함수</p>
-
+<p align="center">메서드 체인에서 일련의 콜백 함수를 안전하게 실행할 수 있는 비동기 
 ## 목차
 
 - [Installing](#installing)

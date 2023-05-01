@@ -1,6 +1,6 @@
 {
   "name": "promise-vigilant",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An asynchronous function that can execute a series of callback functions in a method chain.",
   "type": "module",
   "main": "dist/index.js",
