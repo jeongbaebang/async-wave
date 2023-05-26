@@ -38,14 +38,16 @@ async function vigilAsync<SV, R>(
   const firstPromiseFn = promisify(startValue);
   const promiseRecursiveFn = createPromiseRecursiveFn<R>(callbackFns);
   const options = clonedeep(option);
-  const [onErrorFn, onSuccessFn] = [
+  const [onErrorFn, onSuccessFn, createOnFn] = [
     createOn.error(options?.onError),
     createOn.sucess(options?.onSuccess),
+    createOn.settled(option?.onSettled),
   ];
 
   return promiseRecursiveFn(firstPromiseFn())
     .then(onSuccessFn)
-    .catch(onErrorFn) as Promise<R>;
+    .catch(onErrorFn)
+    .finally(createOnFn) as Promise<R>;
 }
 
-export default vigilAsync;
+export { vigilAsync };

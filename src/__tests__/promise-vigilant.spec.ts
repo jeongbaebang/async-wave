@@ -6,7 +6,7 @@ import {
   nextPromise,
   promisify,
 } from '../utils/fn';
-import vigilAsync from '../index';
+import { vigilAsync } from '../index';
 
 describe('promisify()', () => {
   test('원시값을 전달하면 함수를 반환한다.', () => {
@@ -28,7 +28,7 @@ describe('promisify()', () => {
 
     expect(isPromise(promisify(() => 10)())).toBeFalsy();
 
-    expect(typeof promisify(() => 10, false) === 'function').toBeTruthy();
+    expect(typeof promisify(() => 10, false)).toBe('function');
 
     expect(promisify(() => 10)()).toBe(10);
   });
@@ -70,6 +70,29 @@ describe('createOn()', () => {
 
     expect(fn(50)).toBe(50);
   });
+
+  describe('settled', () => {
+    test('함수를 반환한다.', () => {
+      const fn = jest.fn();
+
+      expect(typeof createOn.settled(fn) === 'function').toBeTruthy();
+    });
+
+    test('항상 undefined를 반환한다.', () => {
+      const fn = jest.fn();
+
+      expect(typeof createOn.settled(fn)()).toBe('undefined');
+      expect(typeof createOn.settled()()).toBe('undefined');
+    });
+
+    test('콜백을 전달하면 콜백을 호출한다.', () => {
+      const fn = jest.fn();
+
+      createOn.settled(fn)();
+
+      expect(fn).toHaveBeenCalled();
+    });
+  });
 });
 
 describe('nextPromise()', () => {
@@ -99,11 +122,56 @@ describe('createPromiseRecursiveFn()', () => {
 });
 
 describe('vigilAsync()', () => {
-  test('10을 전달하면 40을 반환한다.', async () => {
-    const fn1 = (arg0: number) => arg0 + 10;
-    const fn2 = (arg0: number) => arg0 + 20;
+  const fn1 = (arg0: number) => arg0 + 10;
+  const fn2 = (arg0: number) => arg0 + 20;
 
+  test('배열에 전달한 함수가 차례대로 실행된다.', async () => {
     expect(await vigilAsync(10, [fn1, fn2])).toBe(40);
     expect(await vigilAsync(async () => 10, [fn1, fn2])).toBe(40);
+  });
+
+  describe('vigilAsync Options Test', () => {
+    describe('onSuccess', () => {
+      test('콜백 함수의 반환값이 매개변수로 전달된다.', () => {
+        vigilAsync(10, [fn1, fn2], {
+          onSuccess: (received) => {
+            expect(received).toBe(40);
+          },
+        });
+      });
+    });
+
+    describe('onError', () => {
+      test('에러콜백의 반환값이 전달된다', () => {
+        expect(() => {
+          vigilAsync(10, [fn1, fn2], {
+            onError: () => {
+              return 'error';
+            },
+          }).then((msg) => expect(msg).toBe('error'));
+        });
+      });
+    });
+
+    describe('onSettled', () => {
+      const throwError = () => {
+        throw new Error();
+      };
+
+      test('fulfilled, rejected 어떤 상태가 되어도 항상 콜백을 실행한다.', async () => {
+        const fn = jest.fn();
+
+        await vigilAsync(10, [fn1, fn2], {
+          onSettled: fn,
+        });
+
+        await vigilAsync(10, [throwError], {
+          onError: fn,
+          onSettled: fn,
+        });
+
+        expect(fn).toHaveBeenCalledTimes(3);
+      });
+    });
   });
 });

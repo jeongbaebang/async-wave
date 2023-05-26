@@ -41,7 +41,7 @@ Using unpkg CDN:
 ## Usage
 
 ```typescript
-import vigilAsync from 'promise-vigilant';
+import { vigilAsync } from 'promise-vigilant';
 
 vigilAsync(placeId, [getPlaceDetailResult, createAddress], {
   onError: () => {
@@ -63,6 +63,7 @@ vigilAsync(placeId, [getPlaceDetailResult, createAddress], {
 - option (optional): onError 및 onSuccess 콜백 함수를 제공하는 데 사용할 수 있는 선택적 객체입니다.
   - onError: 프로미스가 거부된 상태에 도달했을 때 트리거되는 함수입니다.
   - onSuccess: 프로미스가 해결된 상태에 도달했을 때 트리거되는 함수입니다. 마지막 프로미스의 결과가 인수로 전달됩니다.
+  - onSettled: 프로미스가 해결되거나 거부 두개의 상태중 하나가 되었을때 트리거 되는 함수입니다.
 
 ### Return Value
 
@@ -74,7 +75,6 @@ Without **promise-vigilant**
 
 ```ts
 import axios from 'axios';
-import vigilAsync from 'promise-vigilant';
 
 async function saveUserData() {
   try {
@@ -104,31 +104,16 @@ async function saveUserData() {
 With **promise-vigilant**
 
 ```ts
-const getUserIds = ({ data }) => data.map((user) => user.id);
-const getPostTitle = (post) => post.map(({ data }) => data.title);
-const requestUserList = () => {
-  return axios({
-    method: 'get',
-    url: 'https://jsonplaceholder.typicode.com/users',
-  });
-};
-const setPostPromise = (ids) =>
-  ids.map((id) => {
-    return axios<Post>({
-      method: 'get',
-      url: `https://jsonplaceholder.typicode.com/posts/${id}`,
-    });
-  });
-const requestUserPost = (userPostPayload: Promise<Post>[]) =>
-  Promise.all(userPostPayload);
+import { vigilAsync } from 'promise-vigilant';
 
 function saveUserData() {
   vigilAsync(
     requestUserList,
-    [getUserIds, setPostPromise, requestUserPost, getPostTitle, saveDB],
+    [getUserIds, setPostPromise, requestUserPost, getPostTitle],
     {
       onError: (error) => sendReport(error),
-      onSuccess: () => changeLoadingState(),
+      onSuccess: () => saveDB(),
+      onSettled: () => changeLoadingState(),
     }
   );
 }
