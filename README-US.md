@@ -6,7 +6,7 @@
 
 <p align="center">A utility for safely executing a series of callback functions in an asynchronous method chain.</p>
 
-- [🇰🇷 한국어](../README-US.md)
+- [🇰🇷 한국어](./README.md)
 
 ## Table of Contents
 
