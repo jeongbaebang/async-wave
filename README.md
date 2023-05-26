@@ -106,24 +106,6 @@ With **promise-vigilant**
 ```ts
 import { vigilAsync } from 'promise-vigilant';
 
-const getUserIds = ({ data }) => data.map((user) => user.id);
-const getPostTitle = (post) => post.map(({ data }) => data.title);
-const requestUserList = () => {
-  return axios({
-    method: 'get',
-    url: 'https://jsonplaceholder.typicode.com/users',
-  });
-};
-const setPostPromise = (ids) =>
-  ids.map((id) => {
-    return axios<Post>({
-      method: 'get',
-      url: `https://jsonplaceholder.typicode.com/posts/${id}`,
-    });
-  });
-const requestUserPost = (userPostPayload: Promise<Post>[]) =>
-  Promise.all(userPostPayload);
-
 function saveUserData() {
   vigilAsync(
     requestUserList,
