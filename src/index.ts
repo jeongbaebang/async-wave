@@ -4,7 +4,7 @@ import type { CallbackFns, Options, StartValue } from './utils/types';
 import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
 
 /**
- * @version 1.0.0
+ * @version 1.1.3
  * @param startValue The first value to be promised. If the value is not a function, it will be converted to a promised function using the `promisify` utility function.
  *
  * **Note:** If you pass a function as the first argument and its return value is not a promise, it will raise an error.
@@ -15,6 +15,8 @@ import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
  * **onError** - A function that will be triggered when the promise reaches the rejected state.
  *
  * **onSuccess** - A function that will be triggered when the promise reaches the resolved state. The result of the last promise will be passed as the argument.
+ *
+ * **onSettled** - A function that is triggered when the promise is in one of two states: resolved or rejected.
  *
  * @returns A `Promise` object.
  *
