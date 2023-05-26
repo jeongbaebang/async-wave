@@ -5,10 +5,10 @@ import isFunction from 'lodash.isfunction';
 import isEqual from 'lodash.isequal';
 import { promisify as _promisify } from 'es6-promisify';
 
-import type { CallbackFns, OnError, OnSuccess } from './types';
+import type { CallbackFns, OnError, OnSettled, OnSuccess } from './types';
 
 export const createOn = {
-  error(onError: OnError | undefined) {
+  error(onError?: OnError) {
     return (error: Error) => {
       if (onError) {
         return onError(error);
@@ -17,13 +17,20 @@ export const createOn = {
       throw error;
     };
   },
-  sucess<T>(onSuccess: OnSuccess<T> | undefined) {
+  sucess<T>(onSuccess?: OnSuccess<T>) {
     return (received: T) => {
       if (onSuccess) {
         onSuccess(clonedeep(received));
       }
 
       return clonedeep(received);
+    };
+  },
+  settled(onSettled?: OnSettled) {
+    return () => {
+      if (onSettled) {
+        onSettled();
+      }
     };
   },
 };
