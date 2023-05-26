@@ -109,7 +109,7 @@ import { vigilAsync } from 'promise-vigilant';
 function saveUserData() {
   vigilAsync(
     requestUserList,
-    [getUserIds, setPostPromise, requestUserPost, getPostTitle, saveDB],
+    [getUserIds, setPostPromise, requestUserPost, getPostTitle],
     {
       onError: (error) => sendReport(error),
       onSuccess: () => saveDB(),
