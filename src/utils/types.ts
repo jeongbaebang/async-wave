@@ -10,7 +10,10 @@ export interface Option<T> {
   onSettled: OnSettled;
 }
 
-export type StartValue<SV> = Exclude<SV, () => any> | (() => Promise<SV>);
+export type StartValue<SV> =
+  | Exclude<SV, () => any>
+  | (() => Promise<SV>)
+  | (() => SV);
 
 export type CallbackFns = ((value: any) => any)[];
 

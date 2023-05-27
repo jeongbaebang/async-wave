@@ -4,20 +4,13 @@ import type { CallbackFns, Options, StartValue } from './utils/types';
 import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
 
 /**
- * @version 1.1.3
- * @param startValue The first value to be promised. If the value is not a function, it will be converted to a promised function using the `promisify` utility function.
+ * @version 1.2.0
+ * @param startValue The first value to be promisified. If the value is not a function or a promise, it will be automatically converted into a function that returns a promise.
  *
- * **Note:** If you pass a function as the first argument and its return value is not a promise, it will raise an error.
+ * **Note:** Regardless of the value passed as the first argument, it will always be wrapped in a promise and passed as an argument.
  *
  * @param callbackFns An array of callback functions to be executed in the `then` method.
- * @param option An optional object that can be used to provide `onError` and `onSuccess` callback functions.
- *
- * **onError** - A function that will be triggered when the promise reaches the rejected state.
- *
- * **onSuccess** - A function that will be triggered when the promise reaches the resolved state. The result of the last promise will be passed as the argument.
- *
- * **onSettled** - A function that is triggered when the promise is in one of two states: resolved or rejected.
- *
+ * @param option (optional): An optional object that provides onError, onSettled and onSuccess callback functions.
  * @returns A `Promise` object.
  *
  * @example
@@ -32,15 +25,22 @@ import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
  * });
  * ```
  */
+
 async function vigilAsync<SV, R>(
   startValue: StartValue<SV>,
   callbackFns: CallbackFns,
   option?: Options<R>
 ): Promise<R> {
-  const firstPromiseFn = promisify(startValue);
-  const promiseRecursiveFn = createPromiseRecursiveFn<R>(callbackFns);
-  const options = clonedeep(option);
-  const [onErrorFn, onSuccessFn, createOnFn] = [
+  const args = [startValue, callbackFns, option].map((arg) => clonedeep(arg));
+  const firstPromiseFn = promisify(
+    typeof startValue === 'object' ? (args[0] as StartValue<SV>) : startValue,
+    true
+  );
+  const promiseRecursiveFn = createPromiseRecursiveFn<R>(
+    args[1] as CallbackFns
+  );
+  const options = args[2] as Options<R>;
+  const [onErrorFn, onSuccessFn, onSettledFn] = [
     createOn.error(options?.onError),
     createOn.sucess(options?.onSuccess),
     createOn.settled(option?.onSettled),
@@ -49,7 +49,7 @@ async function vigilAsync<SV, R>(
   return promiseRecursiveFn(firstPromiseFn())
     .then(onSuccessFn)
     .catch(onErrorFn)
-    .finally(createOnFn) as Promise<R>;
+    .finally(onSettledFn) as Promise<R>;
 }
 
 export { vigilAsync };

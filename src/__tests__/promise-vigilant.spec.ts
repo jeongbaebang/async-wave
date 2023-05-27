@@ -15,12 +15,14 @@ describe('promisify()', () => {
 
   test('항상 반환값은 프로미스이다.', () => {
     expect(isPromise(promisify(10)())).toBeTruthy();
-
+    expect(isPromise(promisify(() => 10, true)())).toBeTruthy();
     expect(isPromise(promisify(async () => 10)())).toBeTruthy();
   });
 
   test('두번째 인수로 true를 전달하면 일반 함수도 프로미스를 반환한다.', () => {
-    expect(isPromise(promisify(() => 10, true)())).toBeTruthy();
+    const fn = promisify(() => 10, true);
+
+    expect(isPromise(fn())).toBeTruthy();
   });
 
   test('두번째 인수를 전달하지 않고 일반 함수를 전달한다면 프로미스가 아닌 일반 함수를 반환한다.', () => {
@@ -125,9 +127,24 @@ describe('vigilAsync()', () => {
   const fn1 = (arg0: number) => arg0 + 10;
   const fn2 = (arg0: number) => arg0 + 20;
 
-  test('배열에 전달한 함수가 차례대로 실행된다.', async () => {
-    expect(await vigilAsync(10, [fn1, fn2])).toBe(40);
-    expect(await vigilAsync(async () => 10, [fn1, fn2])).toBe(40);
+  test('항상 프로미스를 반환해야 한다.', () => {
+    expect(isPromise(vigilAsync(10, [fn1, fn2]))).toBeTruthy();
+    expect(isPromise(vigilAsync(() => 10, [fn1, fn2]))).toBeTruthy();
+    expect(isPromise(vigilAsync(async () => 10, [fn1, fn2]))).toBeTruthy();
+  });
+
+  test('두번째 인자로 배열에 전달한 함수가 차례대로 실행된다.', () => {
+    vigilAsync(10, [fn1, fn2]).then((value) => {
+      expect(value).toBe(40);
+    });
+
+    vigilAsync(async () => 10, [fn1, fn2]).then((value) => {
+      expect(value).toBe(40);
+    });
+
+    vigilAsync(() => 10, [fn1, fn2]).then((value) => {
+      expect(value).toBe(40);
+    });
   });
 
   describe('vigilAsync Options Test', () => {

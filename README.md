@@ -4,7 +4,8 @@
    </b>
 </h1>
 
-<p align="center">메서드 체인에서 일련의 콜백 함수를 안전하게 실행할 수 있는 비동기 함수</p>
+<p align="center">안전하게 실행할 수 있는 비동기 함수로서, 메서드 체인에서 일련의 콜백 함수를 순차적으로 실행하고,</p>
+<p align="center">어떤 값이든 안전하게 프로미스로 변환하여 비동기 함수의 인자로 전달합니다.</p>
 
 - [🇺🇸 English](./README-US.md)
 
@@ -37,7 +38,7 @@ $ yarn add promise-vigilant
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/promise-vigilant@1.1.3/dist/index.js"></script>
+<script src="https://unpkg.com/promise-vigilant@1.2.0/dist/index.js"></script>
 ```
 
 ## Usage
@@ -57,12 +58,12 @@ vigilAsync(placeId, [getPlaceDetailResult, createAddress], {
 
 ### Parameters
 
-- startValue: 프로미스화하려는 첫 번째 값입니다. 값이 함수가 아닌 경우 promisify 유틸리티 함수를 사용하여 프로미스화됩니다.
+- startValue: 프로미스화하려는 첫 번째 값입니다. 값이 함수가 아니거나 프로미스가 아니라면 자동으로 프로미스를 반환하는 함수로 변환시킵니다.
 
-**참고: 첫 번째 인수로 함수를 전달하고 해당 함수의 반환 값이 프로미스가 아닌 경우 오류가 발생합니다.**
+**참고: 첫번째 인수는 어떤 값을 전달하든 항상 프로미스로 감싸져서 전달됩니다.**
 
 - callbackFns: then 메소드에서 실행할 콜백 함수의 배열입니다.
-- option (optional): onError 및 onSuccess 콜백 함수를 제공하는 데 사용할 수 있는 선택적 객체입니다.
+- option (optional): onError, onSuccess 및 onSettled 콜백 함수를 제공하는 데 사용할 수 있는 선택적 객체입니다.
   - onError: 프로미스가 거부된 상태에 도달했을 때 트리거되는 함수입니다.
   - onSuccess: 프로미스가 해결된 상태에 도달했을 때 트리거되는 함수입니다. 마지막 프로미스의 결과가 인수로 전달됩니다.
   - onSettled: 프로미스가 해결되거나 거부 두 개의 상태 중 하나가 되었을 때 트리거 되는 함수입니다.

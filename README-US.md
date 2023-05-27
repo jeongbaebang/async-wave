@@ -4,7 +4,8 @@
    </b>
 </h1>
 
-<p align="center">A utility for safely executing a series of callback functions in an asynchronous method chain.</p>
+<p align="center">A safe asynchronous function that executes a series of callback functions sequentially in a method chain,</p>
+<p align="center">safely converting any value to a promise and passing it as an argument to the asynchronous function.</p>
 
 - [🇰🇷 한국어](./README.md)
 
@@ -37,7 +38,7 @@ $ yarn add promise-vigilant
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/promise-vigilant@1.1.3/dist/index.js"></script>
+<script src="https://unpkg.com/promise-vigilant@1.2.0/dist/index.js"></script>
 ```
 
 ## Usage

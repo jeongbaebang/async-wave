@@ -3,6 +3,7 @@ import size from 'lodash.size';
 import add from 'lodash.add';
 import isFunction from 'lodash.isfunction';
 import isEqual from 'lodash.isequal';
+import isPromise from 'is-promise';
 import { promisify as _promisify } from 'es6-promisify';
 
 import type { CallbackFns, OnError, OnSettled, OnSuccess } from './types';
@@ -49,7 +50,8 @@ export function promisify<T>(
     return async () => target;
   }
 
-  if (convertFn) {
+  // 함수인데 프로미스가 아닌경우
+  if (convertFn && !isPromise(target)) {
     return _promisify(target);
   }
 
