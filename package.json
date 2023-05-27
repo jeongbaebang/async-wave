@@ -10,7 +10,10 @@
     "test": "jest"
   },
   "author": "jeongbaebang_dev",
-  "repository": "https://github.com/jeongbaebang/promise-vigilant",
+  "repository": "https://github.com/jeongbaebang/promise-vigilant.git",
+  "publishConfig": {
+    "@YOUR-USERNAME:registry": "https://npm.pkg.github.com"
+  },
   "license": "MIT",
   "keywords": [
     "typescript",
