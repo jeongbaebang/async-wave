@@ -12,7 +12,7 @@
   "author": "jeongbaebang",
   "repository": "https://github.com/jeongbaebang/promise-vigilant.git",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "@github:registry": "https://npm.pkg.github.com"
   },
   "license": "MIT",
   "keywords": [
@@ -23,6 +23,7 @@
     "dist",
     "LICENSE",
     "README.md",
+    "README-US.md",
     "package.json"
   ],
   "private": false,
