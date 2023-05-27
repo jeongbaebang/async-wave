@@ -1,7 +1,7 @@
 {
   "name": "promise-vigilant",
-  "version": "1.2.5",
-  "description": "An asynchronous function that can execute a series of callback functions in a method chain.",
+  "version": "1.2.11",
+  "description": "A sequential method chain for asynchronous execution of callback functions, safely converting and passing any value as a promise.",
   "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,7 +12,8 @@
   "author": "jeongbaebang",
   "repository": "https://github.com/jeongbaebang/promise-vigilant.git",
   "publishConfig": {
-    "@github:registry": "https://npm.pkg.github.com"
+    "@jeongbaebang:registry": "https://npm.pkg.github.com",
+    "access": "public"
   },
   "license": "MIT",
   "keywords": [
