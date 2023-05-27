@@ -46,7 +46,59 @@ Using unpkg CDN:
 ```typescript
 import { vigilAsync } from 'promise-vigilant';
 
-vigilAsync(placeId, [getPlaceDetailResult, createAddress], {
+// 원시값 전달했을 때
+vigilAsync(10, [async (num) => num + 5, (num) => num + 20], {
+  onSuccess: (result) => {
+    console.log(result); // 35
+  },
+});
+
+// 일반 함수를 전달했을 때
+vigilAsync(() => 10, [(num) => num + 5, async (num) => num + 20], {
+  onSuccess: (result) => {
+    console.log(result); // 35
+  },
+});
+
+// 비동기 함수를 전달했을 때
+vigilAsync(async () => 10, [(num) => num + 5, (num) => num + 20], {
+  onSuccess: (result) => {
+    console.log(result); // 35
+  },
+});
+
+// 에러가 캐치되어 외부 컨텍스트로 에러가 방출되지 않습니다. (처리된 에러)
+vigilAsync(
+  10,
+  [
+    () => {
+      throw new Error('new Error!');
+    },
+    (num) => num + 20,
+  ],
+  {
+    onError: (error) => {
+      console.log(error.message); // new Error!
+    },
+  }
+);
+
+// onError 옵션을 사용하지 않으면 에러가 외부로 방출됩니다.
+(async function () {
+  try {
+    await vigilAsync(10, [
+      () => {
+        throw new Error('new Error2!');
+      },
+      (num) => num + 20,
+    ]);
+  } catch (error: any) {
+    console.log(error.message); // new Error2!
+  }
+})();
+
+// 외부 API와 함께 사용
+vigilAsync(placeId, [requestPlaceDetailResultAPI, createAddress], {
   onError: () => {
     return mapErrorHandler(location, ErrorType.network);
   },

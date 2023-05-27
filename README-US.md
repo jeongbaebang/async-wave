@@ -38,7 +38,7 @@ $ yarn add promise-vigilant
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/promise-vigilant@1.2.0/dist/index.js"></script>
+<script src="https://unpkg.com/promise-vigilant@1.2.1/dist/index.js"></script>
 ```
 
 ## Usage
@@ -46,12 +46,64 @@ Using unpkg CDN:
 ```typescript
 import { vigilAsync } from 'promise-vigilant';
 
-vigilAsync(startValue, [callbackFn1, callbackFn2], {
+// When passing primitive values
+vigilAsync(10, [async (num) => num + 5, (num) => num + 20], {
+  onSuccess: (result) => {
+    console.log(result); // 35
+  },
+});
+
+// When passing a generic function
+vigilAsync(() => 10, [(num) => num + 5, async (num) => num + 20], {
+  onSuccess: (result) => {
+    console.log(result); // 35
+  },
+});
+
+// When passing an async function
+vigilAsync(async () => 10, [(num) => num + 5, (num) => num + 20], {
+  onSuccess: (result) => {
+    console.log(result); // 35
+  },
+});
+
+// Errors are caught so they are not emitted to the external context.
+vigilAsync(
+  10,
+  [
+    () => {
+      throw new Error('new Error!');
+    },
+    (num) => num + 20,
+  ],
+  {
+    onError: (error) => {
+      console.log(error.message); // new Error!
+    },
+  }
+);
+
+// If the onError option is not used, the error is emitted externally.
+(async function () {
+  try {
+    await vigilAsync(10, [
+      () => {
+        throw new Error('new Error2!');
+      },
+      (num) => num + 20,
+    ]);
+  } catch (error: any) {
+    console.log(error.message); // new Error2!
+  }
+})();
+
+// Use with external APIs
+vigilAsync(placeId, [requestPlaceDetailResultAPI, createAddress], {
   onError: () => {
-    // Handle error
+    return mapErrorHandler(location, ErrorType.network);
   },
   onSuccess: (data) => {
-    // Handle success
+    cache.set(data.place_id, data);
   },
 });
 ```

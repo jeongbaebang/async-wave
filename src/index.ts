@@ -4,7 +4,7 @@ import type { CallbackFns, Options, StartValue } from './utils/types';
 import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
 
 /**
- * @version 1.2.0
+ * @version 1.2.1
  * @param startValue The first value to be promisified. If the value is not a function or a promise, it will be automatically converted into a function that returns a promise.
  *
  * **Note:** Regardless of the value passed as the first argument, it will always be wrapped in a promise and passed as an argument.

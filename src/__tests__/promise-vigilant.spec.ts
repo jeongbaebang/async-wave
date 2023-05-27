@@ -61,10 +61,10 @@ describe('createOn()', () => {
     expect(typeof createOn.sucess(undefined) === 'function').toBeTruthy();
   });
 
-  test('인수를 전달한 sucess 메소드는 40을 반환한다. (값의 부수효과가 없다)', () => {
+  test('인수를 전달한 sucess 메소드는 결과값을 반환한다.', () => {
     const fn = createOn.sucess((arg0: number) => arg0 + 150);
 
-    expect(fn(40)).toBe(40);
+    expect(fn(40)).toBe(190);
   });
 
   test('인수를 전달하지 않은 sucess 메소드는 50을 반환한다.', () => {
