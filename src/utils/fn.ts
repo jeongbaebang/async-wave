@@ -21,7 +21,7 @@ export const createOn = {
   sucess<T>(onSuccess?: OnSuccess<T>) {
     return (received: T) => {
       if (onSuccess) {
-        onSuccess(clonedeep(received));
+        return onSuccess(clonedeep(received));
       }
 
       return clonedeep(received);
