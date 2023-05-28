@@ -24,7 +24,6 @@
     "dist",
     "LICENSE",
     "README.md",
-    "README-US.md",
     "package.json"
   ],
   "private": false,
