@@ -4,7 +4,6 @@ import add from 'lodash.add';
 import isFunction from 'lodash.isfunction';
 import isEqual from 'lodash.isequal';
 import isPromise from 'is-promise';
-import { promisify as _promisify } from 'es6-promisify';
 
 import type { CallbackFns, OnError, OnSettled, OnSuccess } from './types';
 
@@ -52,7 +51,13 @@ export function promisify<T>(
 
   // 함수인데 프로미스가 아닌경우
   if (convertFn && !isPromise(target)) {
-    return _promisify(target);
+    const asyncFn = () => {
+      return new Promise((resolve) => {
+        resolve(target());
+      });
+    };
+
+    return asyncFn as () => Promise<T>;
   }
 
   return target as () => Promise<T>;
