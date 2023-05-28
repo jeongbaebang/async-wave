@@ -10,10 +10,9 @@
     "test": "jest"
   },
   "author": "jeongbaebang",
-  "repository": "https://github.com/jeongbaebang/promise-vigilant.git",
-  "publishConfig": {
-    "@jeongbaebang:registry": "https://npm.pkg.github.com",
-    "access": "public"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jeongbaebang/promise-vigilant.git"
   },
   "license": "MIT",
   "keywords": [
