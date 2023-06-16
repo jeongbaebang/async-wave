@@ -42,7 +42,7 @@ async function vigilAsync<SV, R>(
   const options = args[2] as Options<R>;
   const [onErrorFn, onSuccessFn, onSettledFn] = [
     createOn.error(options?.onError),
-    createOn.sucess(options?.onSuccess),
+    createOn.success(options?.onSuccess),
     createOn.settled(option?.onSettled),
   ];
 
