@@ -4,8 +4,7 @@
    </b>
 </h1>
 
-<p align="center">A safe asynchronous function that executes a series of callback functions sequentially in a method chain,</p>
-<p align="center">safely converting any value to a promise and passing it as an argument to the asynchronous function.</p>
+<p align="center">`vigilAsync` is a safely executed asynchronous function that sequentially executes a chain of callback functions and returns the result. It safely transforms any value into a Promise and passes it as an argument to the asynchronous function. This allows for easy management of asynchronous operations and returning of results. Additionally, `vigilAsync` provides intuitive implementation of error handling, success handling, and other logic through callback functions. This enables developers to write safe and efficient asynchronous code.</p>
 
 - [🇰🇷 한국어](./README.md)
 
@@ -44,30 +43,23 @@ Using unpkg CDN:
 ## Usage
 
 ```typescript
-import { vigilAsync } from 'promise-vigilant';
+import { vigilAsync } from 'vigil-async';
 
-// When passing primitive values
+// Example 1: Basic Usage
 vigilAsync(10, [async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
-// When passing a generic function
+// Example 2: Using Functions and Async Functions
 vigilAsync(() => 10, [(num) => num + 5, async (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
-// When passing an async function
-vigilAsync(async () => 10, [(num) => num + 5, (num) => num + 20], {
-  onSuccess: (result) => {
-    console.log(result); // 35
-  },
-});
-
-// Errors are caught so they are not emitted to the external context.
+// Example 3: Handling Errors
 vigilAsync(
   10,
   [
@@ -83,7 +75,7 @@ vigilAsync(
   }
 );
 
-// If the onError option is not used, the error is emitted externally.
+// Example 4: Propagating Errors to External Context
 (async function () {
   try {
     await vigilAsync(10, [
@@ -97,10 +89,28 @@ vigilAsync(
   }
 })();
 
-// Use with external APIs
+// Example 5: Using with External API and Options
+const placeId = '12345';
+const requestPlaceDetailResultAPI = async (placeId: string) => {
+  // Request place detail results from an API
+  return fetch(`https://api.example.com/places/${placeId}`)
+    .then((response) => response.json())
+    .catch((error) => {
+      throw new Error(`Failed to fetch place details: ${error.message}`);
+    });
+};
+const createAddress = async (placeDetails: any) => {
+  // Process place details and create an address
+  return `${placeDetails.street}, ${placeDetails.city}, ${placeDetails.country}`;
+};
+const mapErrorHandler = (location: string, errorType: string) => {
+  // Handle and map errors
+  console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
+};
+
 vigilAsync(placeId, [requestPlaceDetailResultAPI, createAddress], {
   onError: () => {
-    return mapErrorHandler(location, ErrorType.network);
+    return mapErrorHandler(placeId, ErrorType.network);
   },
   onSuccess: (data) => {
     cache.set(data.place_id, data);
@@ -110,15 +120,15 @@ vigilAsync(placeId, [requestPlaceDetailResultAPI, createAddress], {
 
 ### Parameters
 
-- startValue: The first value to be promisified. If the value is not a function, it will be promisified using the `promisify` utility function.
+- startValue: startValue: The first value to be promisified. If the value is not a function or a promise, it will be automatically converted into a function that returns a promise. Note that regardless of the value passed as the first argument, it will always be wrapped in a promise and passed as an argument.
 
 **Note: If a function is passed as the first argument and its return value is not a promise, an error will be thrown.**
 
-- callbackFns: An array of callback functions to be executed in the `then` method.
-- options (optional): An optional object that can provide `onError` and `onSuccess` callback functions.
-  - onError: A function triggered when the promise reaches the rejected state.
-  - onSuccess: A function triggered when the promise reaches the resolved state. The result of the last promise is passed as an argument.
-  - onSettled: A function triggered when the promise reaches either the resolved or rejected state.
+- callbacks: An array of callback functions to be executed in the then method.
+- option (optional): An optional object that provides the following callback functions:
+  - onError: A function triggered when the promise reaches a rejected state.
+  - onSuccess: A function triggered when the promise reaches a resolved state. The result of the last promise is passed as an argument to this function.
+  - onSettled: A function triggered when the promise reaches either a resolved or a rejected state.
 
 ### Return Value
 
@@ -126,52 +136,78 @@ A Promise object that returns the result of the last promise in the chain.
 
 ## Example
 
-Without **promise-vigilant**
-
-```ts
-import axios from 'axios';
-
-async function saveUserData() {
-  try {
-    const users = await axios({
-      method: 'get',
-      url: 'https://jsonplaceholder.typicode.com/users',
-    });
-    const userIds = users.data.map((data) => data.id);
-    const userPostPromise = userIds.map((id) =>
-      axios({
-        method: 'get',
-        url: `https://jsonplaceholder.typicode.com/posts/${id}`,
-      })
-    );
-    const userPost = await Promise.all(userPostPromise);
-    const userPostTitle = userPost.map(({ data }) => data.title);
-
-    saveDB(userPostTitle);
-  } catch (error) {
-    sendReport(error);
-  } finally {
-    changeLoadingState();
-  }
-}
-```
-
 With **promise-vigilant**
 
 ```ts
-import { vigilAsync } from 'promise-vigilant';
+import { vigilAsync } from 'vigil-async';
 
-function saveUserData() {
-  vigilAsync(
-    requestUserList,
-    [getUserIds, setPostPromise, requestUserPost, getPostTitle],
-    {
-      onError: (error) => sendReport(error),
-      onSuccess: () => saveDB(),
-      onSettled: () => changeLoadingState(),
-    }
-  );
-}
+// Example 1: Using startVal, callbacks, and option
+const placeId = '12345';
+const getPlaceDetailResult = async (placeId: string) => {
+  // Fetch place details from an API
+  return fetch(`https://api.example.com/places/${placeId}`)
+    .then((response) => response.json())
+    .catch((error) => {
+      throw new Error(`Failed to fetch place details: ${error.message}`);
+    });
+};
+const createAddress = async (placeDetails: any) => {
+  // Process place details and create an address
+  return `${placeDetails.street}, ${placeDetails.city}, ${placeDetails.country}`;
+};
+const mapErrorHandler = (location: string, errorType: string) => {
+  // Handle and map errors
+  console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
+};
+
+vigilAsync(placeId, [getPlaceDetailResult, createAddress], {
+  onError: () => {
+    return mapErrorHandler(placeId, 'network');
+  },
+  onSuccess: (data) => {
+    console.log('Place details:', data);
+    // Store place details in a cache
+  },
+})
+  .then((result) => {
+    console.log('Final result:', result);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+
+// Example 2: Using only callbacks and option
+const fetchData = async () => {
+  // Fetch data from an API
+  return fetch('https://api.example.com/data')
+    .then((response) => response.json())
+    .catch((error) => {
+      throw new Error(`Failed to fetch data: ${error.message}`);
+    });
+};
+const processData = async (data: any) => {
+  // Process data
+  return data.map((item: any) => item.name);
+};
+const handleSuccess = (result: string[]) => {
+  console.log('Processed data:', result);
+  // Do something with the processed data
+};
+const handleError = (error: Error) => {
+  console.error('Error occurred:', error);
+  // Handle the error
+};
+
+vigilAsync([fetchData, processData], {
+  onError: handleError,
+  onSuccess: handleSuccess,
+})
+  .then((result) => {
+    console.log('Final result:', result);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
 ```
 
 ## License
