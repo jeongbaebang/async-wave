@@ -51,9 +51,19 @@ vigilAsync(10, [async (num) => num + 5, (num) => num + 20], {
     console.log(result); // 35
   },
 });
+vigilAsync([10, async (num) => num + 5, (num) => num + 20], {
+  onSuccess: (result) => {
+    console.log(result); // 35
+  },
+});
 
 // Example 2: Using Functions and Async Functions
 vigilAsync(() => 10, [(num) => num + 5, async (num) => num + 20], {
+  onSuccess: (result) => {
+    console.log(result); // 35
+  },
+});
+vigilAsync([() => 10, (num) => num + 5, async (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
@@ -63,6 +73,20 @@ vigilAsync(() => 10, [(num) => num + 5, async (num) => num + 20], {
 vigilAsync(
   10,
   [
+    () => {
+      throw new Error('new Error!');
+    },
+    (num) => num + 20,
+  ],
+  {
+    onError: (error) => {
+      console.log(error.message); // new Error!
+    },
+  }
+);
+vigilAsync(
+  [
+    10,
     () => {
       throw new Error('new Error!');
     },
@@ -108,7 +132,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-vigilAsync(placeId, [requestPlaceDetailResultAPI, createAddress], {
+vigilAsync([placeId, requestPlaceDetailResultAPI, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, ErrorType.network);
   },
@@ -120,7 +144,7 @@ vigilAsync(placeId, [requestPlaceDetailResultAPI, createAddress], {
 
 ### Parameters
 
-- startValue: startValue: The first value to be promisified. If the value is not a function or a promise, it will be automatically converted into a function that returns a promise. Note that regardless of the value passed as the first argument, it will always be wrapped in a promise and passed as an argument.
+- startValue: The first value to be promisified. If the value is not a function or a promise, it will be automatically converted into a function that returns a promise.
 
 **Note: If a function is passed as the first argument and its return value is not a promise, an error will be thrown.**
 
