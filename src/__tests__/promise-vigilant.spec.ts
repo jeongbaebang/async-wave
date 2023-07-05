@@ -147,6 +147,12 @@ describe('vigilAsync()', () => {
     });
   });
 
+  test('첫번째 인수가 배열이라면 배열의 첫번째 요소를 첫 인자로 받아야 한다.', () => {
+    vigilAsync([() => 10, fn1, fn2]).then((value) => {
+      expect(value).toBe(40);
+    });
+  });
+
   describe('vigilAsync Options Test', () => {
     describe('onSuccess', () => {
       test('콜백 함수의 반환값이 매개변수로 전달된다.', () => {
