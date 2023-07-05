@@ -37,7 +37,7 @@ $ yarn add promise-vigilant
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/promise-vigilant@1.3.0/dist/index.js"></script>
+<script src="https://unpkg.com/promise-vigilant@1.4.0/dist/index.js"></script>
 ```
 
 ## Usage
