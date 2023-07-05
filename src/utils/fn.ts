@@ -17,7 +17,7 @@ export const createOn = {
       throw error;
     };
   },
-  sucess<T>(onSuccess?: OnSuccess<T>) {
+  success<T>(onSuccess?: OnSuccess<T>) {
     return (received: T) => {
       if (onSuccess) {
         return onSuccess(clonedeep(received));
