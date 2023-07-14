@@ -15,6 +15,6 @@ export type StartValue<SV> =
   | (() => Promise<SV>)
   | (() => SV);
 
-export type CallbackFns = ((value: any) => any)[];
+export type CallbackFns = any[];
 
 export type Options<R> = Partial<Option<R>>;

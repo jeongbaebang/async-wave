@@ -46,24 +46,28 @@ Using unpkg CDN:
 import { vigilAsync } from 'vigil-async';
 
 // Example 1: Basic Usage
-vigilAsync(10, [async (num) => num + 5, (num) => num + 20], {
+vigilAsync<number, number>(10, [async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
-vigilAsync([10, async (num) => num + 5, (num) => num + 20], {
+vigilAsync<number>([10, async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
 // Example 2: Using Functions and Async Functions
-vigilAsync(() => 10, [(num) => num + 5, async (num) => num + 20], {
-  onSuccess: (result) => {
-    console.log(result); // 35
-  },
-});
-vigilAsync([() => 10, (num) => num + 5, async (num) => num + 20], {
+vigilAsync<number, number>(
+  () => 10,
+  [(num) => num + 5, async (num) => num + 20],
+  {
+    onSuccess: (result) => {
+      console.log(result); // 35
+    },
+  }
+);
+vigilAsync<number>([() => 10, (num) => num + 5, async (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
@@ -132,7 +136,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-vigilAsync([placeId, requestPlaceDetailResultAPI, createAddress], {
+vigilAsync<string>([placeId, requestPlaceDetailResultAPI, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, ErrorType.network);
   },
@@ -184,7 +188,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-vigilAsync(placeId, [getPlaceDetailResult, createAddress], {
+vigilAsync<string, string>(placeId, [getPlaceDetailResult, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, 'network');
   },
@@ -222,7 +226,7 @@ const handleError = (error: Error) => {
   // Handle the error
 };
 
-vigilAsync([fetchData, processData], {
+vigilAsync<string[]>([fetchData, processData], {
   onError: handleError,
   onSuccess: handleSuccess,
 })
