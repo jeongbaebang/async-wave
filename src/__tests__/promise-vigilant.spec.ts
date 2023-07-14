@@ -116,7 +116,10 @@ describe('createPromiseRecursiveFn()', () => {
 
   test('반환된 함수를 실행하면 기대값 10을 반환한다.', async () => {
     const promiseFn = async () => 1;
-    const fn = createPromiseRecursiveFn([(a) => a + 3, (b) => b + 6]);
+    const fn = createPromiseRecursiveFn([
+      (a: number) => a + 3,
+      (b: number) => b + 6,
+    ]);
     const result = await fn(promiseFn());
 
     expect(result).toBe(10);
@@ -134,21 +137,23 @@ describe('vigilAsync()', () => {
   });
 
   test('두번째 인자로 배열에 전달한 함수가 차례대로 실행된다.', () => {
-    vigilAsync(10, [fn1, fn2]).then((value) => {
+    vigilAsync<number, number>(10, [fn1, fn2]).then((value) => {
       expect(value).toBe(40);
     });
 
-    vigilAsync(async () => 10, [fn1, fn2]).then((value) => {
-      expect(value).toBe(40);
-    });
+    vigilAsync<Promise<number>, number>(async () => 10, [fn1, fn2]).then(
+      (value) => {
+        expect(value).toBe(40);
+      }
+    );
 
-    vigilAsync(() => 10, [fn1, fn2]).then((value) => {
+    vigilAsync<number, number>(() => 10, [fn1, fn2]).then((value) => {
       expect(value).toBe(40);
     });
   });
 
   test('첫번째 인수가 배열이라면 배열의 첫번째 요소를 첫 인자로 받아야 한다.', () => {
-    vigilAsync([() => 10, fn1, fn2]).then((value) => {
+    vigilAsync<number>([10, fn1, fn2]).then((value) => {
       expect(value).toBe(40);
     });
   });
@@ -156,7 +161,7 @@ describe('vigilAsync()', () => {
   describe('vigilAsync Options Test', () => {
     describe('onSuccess', () => {
       test('콜백 함수의 반환값이 매개변수로 전달된다.', () => {
-        vigilAsync(10, [fn1, fn2], {
+        vigilAsync<number, number>(10, [fn1, fn2], {
           onSuccess: (received) => {
             expect(received).toBe(40);
           },
@@ -167,7 +172,7 @@ describe('vigilAsync()', () => {
     describe('onError', () => {
       test('에러콜백의 반환값이 전달된다', () => {
         expect(() => {
-          vigilAsync(10, [fn1, fn2], {
+          vigilAsync<number, number>(10, [fn1, fn2], {
             onError: () => {
               return 'error';
             },
@@ -184,11 +189,11 @@ describe('vigilAsync()', () => {
       test('fulfilled, rejected 어떤 상태가 되어도 항상 콜백을 실행한다.', async () => {
         const fn = jest.fn();
 
-        await vigilAsync(10, [fn1, fn2], {
+        await vigilAsync<number, number>(10, [fn1, fn2], {
           onSettled: fn,
         });
 
-        await vigilAsync(10, [throwError], {
+        await vigilAsync<number, number>(10, [throwError], {
           onError: fn,
           onSettled: fn,
         });

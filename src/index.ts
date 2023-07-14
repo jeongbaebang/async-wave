@@ -74,7 +74,7 @@ async function vigilAsync<SV, R>(
   const options = clonedArgs[2] as Options<R>;
   const onError = createOn.error(options?.onError);
   const onSuccess = createOn.success(options?.onSuccess);
-  const onSettled = createOn.settled(option?.onSettled);
+  const onSettled = createOn.settled(options?.onSettled);
 
   return promiseRecursiveFn(firstPromiseFn())
     .then(onSuccess)
