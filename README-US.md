@@ -43,7 +43,7 @@ Using unpkg CDN:
 ## Usage
 
 ```typescript
-import { goAsync } from 'vigil-async';
+import { goAsync } from 'promise-vigilant';
 
 // Example 1: Basic Usage
 goAsync(10, [async (num) => num + 5, (num) => num + 20], {
@@ -163,7 +163,7 @@ A Promise object that returns the result of the last promise in the chain.
 With **promise-vigilant**
 
 ```ts
-import { goAsync } from 'vigil-async';
+import { goAsync } from 'promise-vigilant';
 
 // Example 1: Using startVal, callbacks, and option
 const placeId = '12345';
