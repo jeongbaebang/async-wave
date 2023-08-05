@@ -4,7 +4,7 @@ import type { CallbackFns, Options, StartValue } from './utils/types';
 import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
 
 /**
- * @version 1.4.0
+ * @version 1.5.0
  * @param startVal The first value to be promisified. If the value is not a function or a promise, it will be automatically converted into a function that returns a promise.
  *
  * **Note:** Regardless of the value passed as the first argument, it will always be wrapped in a promise and passed as an argument.
@@ -16,7 +16,7 @@ import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
  * @example
  * ```typescript
  * // Promisify and execute a sequence of callback functions
- * vigilAsync(placeId, [getPlaceDetailResult, createAddress], {
+ * goAsync(placeId, [getPlaceDetailResult, createAddress], {
  *   onError: () => {
  *     return mapErrorHandler(location, ErrorType.network);
  *   },
@@ -25,7 +25,7 @@ import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
  *   },
  * });
  *
- * vigilAsync([placeId, getPlaceDetailResult, createAddress], {
+ * goAsync([placeId, getPlaceDetailResult, createAddress], {
  *   onError: () => {
  *     return mapErrorHandler(location, ErrorType.network);
  *   },
@@ -36,15 +36,15 @@ import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
  * ```
  */
 
-function vigilAsync<SV, R>(
+function goAsync<SV, R>(
   startVal: StartValue<SV>,
   callbacks: CallbackFns,
   option?: Options<R>
 ): Promise<R>;
 
-function vigilAsync<R>(callbacks: CallbackFns, option?: Options<R>): Promise<R>;
+function goAsync<R>(callbacks: CallbackFns, option?: Options<R>): Promise<R>;
 
-async function vigilAsync<SV, R>(
+async function goAsync<SV, R>(
   startValue: StartValue<SV> | CallbackFns,
   callbacks: CallbackFns | Options<R> | undefined,
   option?: Options<R> | undefined
@@ -82,4 +82,4 @@ async function vigilAsync<SV, R>(
     .finally(onSettled) as Promise<R>;
 }
 
-export { vigilAsync };
+export { goAsync };

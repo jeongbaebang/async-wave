@@ -4,7 +4,7 @@
    </b>
 </h1>
 
-<p align="center">`vigilAsync` is a safely executed asynchronous function that sequentially executes a chain of callback functions and returns the result. It safely transforms any value into a Promise and passes it as an argument to the asynchronous function. This allows for easy management of asynchronous operations and returning of results. Additionally, `vigilAsync` provides intuitive implementation of error handling, success handling, and other logic through callback functions. This enables developers to write safe and efficient asynchronous code.</p>
+<p align="center">`goAsync` is a safely executed asynchronous function that sequentially executes a chain of callback functions and returns the result. It safely transforms any value into a Promise and passes it as an argument to the asynchronous function. This allows for easy management of asynchronous operations and returning of results. Additionally, `goAsync` provides intuitive implementation of error handling, success handling, and other logic through callback functions. This enables developers to write safe and efficient asynchronous code.</p>
 
 - [🇰🇷 한국어](./README.md)
 
@@ -37,40 +37,40 @@ $ yarn add promise-vigilant
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/promise-vigilant@1.4.0/dist/index.js"></script>
+<script src="https://unpkg.com/promise-vigilant@1.5.0/dist/index.js"></script>
 ```
 
 ## Usage
 
 ```typescript
-import { vigilAsync } from 'vigil-async';
+import { goAsync } from 'vigil-async';
 
 // Example 1: Basic Usage
-vigilAsync(10, [async (num) => num + 5, (num) => num + 20], {
+goAsync(10, [async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
-vigilAsync([10, async (num) => num + 5, (num) => num + 20], {
+goAsync([10, async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
 // Example 2: Using Functions and Async Functions
-vigilAsync(() => 10, [(num) => num + 5, async (num) => num + 20], {
+goAsync(() => 10, [(num) => num + 5, async (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
-vigilAsync([() => 10, (num) => num + 5, async (num) => num + 20], {
+goAsync([() => 10, (num) => num + 5, async (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
 // Example 3: Handling Errors
-vigilAsync(
+goAsync(
   10,
   [
     () => {
@@ -84,7 +84,7 @@ vigilAsync(
     },
   }
 );
-vigilAsync(
+goAsync(
   [
     10,
     () => {
@@ -102,7 +102,7 @@ vigilAsync(
 // Example 4: Propagating Errors to External Context
 (async function () {
   try {
-    await vigilAsync(10, [
+    await goAsync(10, [
       () => {
         throw new Error('new Error2!');
       },
@@ -132,7 +132,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-vigilAsync([placeId, requestPlaceDetailResultAPI, createAddress], {
+goAsync([placeId, requestPlaceDetailResultAPI, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, ErrorType.network);
   },
@@ -163,7 +163,7 @@ A Promise object that returns the result of the last promise in the chain.
 With **promise-vigilant**
 
 ```ts
-import { vigilAsync } from 'vigil-async';
+import { goAsync } from 'vigil-async';
 
 // Example 1: Using startVal, callbacks, and option
 const placeId = '12345';
@@ -184,7 +184,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-vigilAsync(placeId, [getPlaceDetailResult, createAddress], {
+goAsync(placeId, [getPlaceDetailResult, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, 'network');
   },
@@ -222,7 +222,7 @@ const handleError = (error: Error) => {
   // Handle the error
 };
 
-vigilAsync([fetchData, processData], {
+goAsync([fetchData, processData], {
   onError: handleError,
   onSuccess: handleSuccess,
 })
