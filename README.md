@@ -4,7 +4,7 @@
    </b>
 </h1>
 
-<p align="center">vigilAsync은 안전하게 실행되는 비동기 함수로, 콜백 함수들을 메서드 체인으로 연결하여 순차적으로 실행하고 처리 결과를 반환합니다. 프로미스로 안전하게 변환되어 비동기 함수의 인자로 전달되므로, 다양한 비동기 작업을 간편하게 처리할 수 있습니다. 이를 통해 안전하고 효율적인 비동기 코드 작성이 가능합니다.</p>
+<p align="center">"goAsync"은 안전하고 효율적인 비동기 코드 작성을 위해, 콜백 함수를 메서드 체인으로 연결하여 순차적으로 실행하고 처리 결과를 반환하는 비동기 함수입니다. 이를 통해 다양한 비동기 작업을 간편하게 처리할 수 있습니다.</p>
 
 - [🇺🇸 English](./README-US.md)
 
@@ -37,44 +37,40 @@ $ yarn add promise-vigilant
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/promise-vigilant@1.4.0/dist/index.js"></script>
+<script src="https://unpkg.com/promise-vigilant@1.5.0/dist/index.js"></script>
 ```
 
 ## Usage
 
 ```typescript
-import { vigilAsync } from 'vigil-async';
+import { goAsync } from 'promise-vigilant';
 
 // Example 1: Basic Usage
-vigilAsync<number, number>(10, [async (num) => num + 5, (num) => num + 20], {
+goAsync<number, number>(10, [async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
-vigilAsync<number>([10, async (num) => num + 5, (num) => num + 20], {
+goAsync<number>([10, async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
 // Example 2: Using Functions and Async Functions
-vigilAsync<number, number>(
-  () => 10,
-  [(num) => num + 5, async (num) => num + 20],
-  {
-    onSuccess: (result) => {
-      console.log(result); // 35
-    },
-  }
-);
-vigilAsync<number>([() => 10, (num) => num + 5, async (num) => num + 20], {
+goAsync<number, number>(() => 10, [(num) => num + 5, async (num) => num + 20], {
+  onSuccess: (result) => {
+    console.log(result); // 35
+  },
+});
+goAsync<number>([() => 10, (num) => num + 5, async (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
 // Example 3: Handling Errors
-vigilAsync(
+goAsync(
   10,
   [
     () => {
@@ -88,7 +84,7 @@ vigilAsync(
     },
   }
 );
-vigilAsync(
+goAsync(
   [
     10,
     () => {
@@ -106,7 +102,7 @@ vigilAsync(
 // Example 4: Propagating Errors to External Context
 (async function () {
   try {
-    await vigilAsync(10, [
+    await goAsync(10, [
       () => {
         throw new Error('new Error2!');
       },
@@ -136,7 +132,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-vigilAsync<string>([placeId, requestPlaceDetailResultAPI, createAddress], {
+goAsync<string>([placeId, requestPlaceDetailResultAPI, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, ErrorType.network);
   },
@@ -167,7 +163,7 @@ vigilAsync<string>([placeId, requestPlaceDetailResultAPI, createAddress], {
 With **promise-vigilant**
 
 ```ts
-import { vigilAsync } from 'vigil-async';
+import { goAsync } from 'promise-vigilant';
 
 // Example 1: Using startVal, callbacks, and option
 const placeId = '12345';
@@ -188,7 +184,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-vigilAsync<string, string>(placeId, [getPlaceDetailResult, createAddress], {
+goAsync<string, string>(placeId, [getPlaceDetailResult, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, 'network');
   },
@@ -226,7 +222,7 @@ const handleError = (error: Error) => {
   // Handle the error
 };
 
-vigilAsync<string[]>([fetchData, processData], {
+goAsync<string[]>([fetchData, processData], {
   onError: handleError,
   onSuccess: handleSuccess,
 })

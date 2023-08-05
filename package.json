@@ -1,12 +1,13 @@
 {
   "name": "promise-vigilant",
-  "version": "1.4.4",
+  "version": "1.5.1",
   "description": "A sequential method chain for asynchronous execution of callback functions, safely converting and passing any value as a promise.",
   "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "publish npm": "yarn publish",
     "test": "jest --watch"
   },
   "author": "jeongbaebang",
