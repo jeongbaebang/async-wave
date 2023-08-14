@@ -40,15 +40,15 @@ function goAsync<SV, R>(
   startVal: StartValue<SV>,
   callbacks: CallbackFns,
   option?: Options<R>
-): Promise<R>;
+): Promise<any>;
 
-function goAsync<R>(callbacks: CallbackFns, option?: Options<R>): Promise<R>;
+function goAsync<R>(callbacks: CallbackFns, option?: Options<R>): Promise<any>;
 
 async function goAsync<SV, R>(
   startValue: StartValue<SV> | CallbackFns,
   callbacks: CallbackFns | Options<R> | undefined,
   option?: Options<R> | undefined
-): Promise<R> {
+): Promise<any> {
   let clonedArgs;
 
   if (Array.isArray(startValue)) {
