@@ -4,6 +4,7 @@ import type { CallbackFns, Options, StartValue } from './utils/types';
 import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
 
 /**
+ * @see https://github.com/jeongbaebang/async-wave
  * @version 1.5.0
  * @param startVal The first value to be promisified. If the value is not a function or a promise, it will be automatically converted into a function that returns a promise.
  *

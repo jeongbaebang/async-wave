@@ -1,6 +1,6 @@
 {
   "name": "async-wave",
-  "version": "1.5.3",
+  "version": "1.5.5",
   "description": "A sequential method chain for asynchronous execution of callback functions, safely converting and passing any value as a promise.",
   "type": "commonjs",
   "main": "dist/index.js",
