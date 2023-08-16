@@ -1,10 +1,10 @@
 <h1 align="center">
    <b>
-      <img src="assets/promise-vigilant.png" alt="promise-vigilant logo" style="height: 500px; width:500px; border-radius: 50px;"/><br>
+      <img src="assets/async-wave.png" alt="async-wave logo" style="height: 500px; width:500px; border-radius: 50px;"/><br>
    </b>
 </h1>
 
-<p align="center">`goAsync` is a safely executed asynchronous function that sequentially executes a chain of callback functions and returns the result. It safely transforms any value into a Promise and passes it as an argument to the asynchronous function. This allows for easy management of asynchronous operations and returning of results. Additionally, `goAsync` provides intuitive implementation of error handling, success handling, and other logic through callback functions. This enables developers to write safe and efficient asynchronous code.</p>
+<p align="center">`async-wave` is a safely executed asynchronous function that sequentially executes a chain of callback functions and returns the result. It safely transforms any value into a Promise and passes it as an argument to the asynchronous function. This allows for easy management of asynchronous operations and returning of results. Additionally, `asyncWave` provides intuitive implementation of error handling, success handling, and other logic through callback functions. This enables developers to write safe and efficient asynchronous code.</p>
 
 - [🇰🇷 한국어](./README.md)
 
@@ -23,13 +23,13 @@
 Using npm:
 
 ```bash
-$ npm install promise-vigilant
+$ npm install async-wave
 ```
 
 Using yarn:
 
 ```bash
-$ yarn add promise-vigilant
+$ yarn add async-wave
 ```
 
 ### CDN
@@ -37,40 +37,40 @@ $ yarn add promise-vigilant
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/promise-vigilant@1.5.0/dist/index.js"></script>
+<script src="https://unpkg.com/async-wave@1.5.0/dist/index.js"></script>
 ```
 
 ## Usage
 
 ```typescript
-import { goAsync } from 'promise-vigilant';
+import { asyncWave } from 'async-wave';
 
 // Example 1: Basic Usage
-goAsync(10, [async (num) => num + 5, (num) => num + 20], {
+asyncWave(10, [async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
-goAsync([10, async (num) => num + 5, (num) => num + 20], {
+asyncWave([10, async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
 // Example 2: Using Functions and Async Functions
-goAsync(() => 10, [(num) => num + 5, async (num) => num + 20], {
+asyncWave(() => 10, [(num) => num + 5, async (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
-goAsync([() => 10, (num) => num + 5, async (num) => num + 20], {
+asyncWave([() => 10, (num) => num + 5, async (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
 // Example 3: Handling Errors
-goAsync(
+asyncWave(
   10,
   [
     () => {
@@ -84,7 +84,7 @@ goAsync(
     },
   }
 );
-goAsync(
+asyncWave(
   [
     10,
     () => {
@@ -102,7 +102,7 @@ goAsync(
 // Example 4: Propagating Errors to External Context
 (async function () {
   try {
-    await goAsync(10, [
+    await asyncWave(10, [
       () => {
         throw new Error('new Error2!');
       },
@@ -132,7 +132,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-goAsync([placeId, requestPlaceDetailResultAPI, createAddress], {
+asyncWave([placeId, requestPlaceDetailResultAPI, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, ErrorType.network);
   },
@@ -160,10 +160,10 @@ A Promise object that returns the result of the last promise in the chain.
 
 ## Example
 
-With **promise-vigilant**
+With **async-wave**
 
 ```ts
-import { goAsync } from 'promise-vigilant';
+import { asyncWave } from 'async-wave';
 
 // Example 1: Using startVal, callbacks, and option
 const placeId = '12345';
@@ -184,7 +184,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-goAsync(placeId, [getPlaceDetailResult, createAddress], {
+asyncWave(placeId, [getPlaceDetailResult, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, 'network');
   },
@@ -222,7 +222,7 @@ const handleError = (error: Error) => {
   // Handle the error
 };
 
-goAsync([fetchData, processData], {
+asyncWave([fetchData, processData], {
   onError: handleError,
   onSuccess: handleSuccess,
 })
@@ -236,4 +236,4 @@ goAsync([fetchData, processData], {
 
 ## License
 
-[MIT](https://github.com/jeongbaebang/promise-vigilant/blob/main/LICENSE)
+[MIT](https://github.com/jeongbaebang/async-wave/blob/main/LICENSE)

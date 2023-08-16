@@ -1,10 +1,10 @@
 <h1 align="center">
    <b>
-      <img src="assets/promise-vigilant.png" alt="promise-vigilant logo" style="height: 500px; width:500px; border-radius: 50px;"/><br>
+      <img src="assets/async-wave.png" alt="async-wave logo" style="height: 500px; width:500px; border-radius: 50px;"/><br>
    </b>
 </h1>
 
-<p align="center">"goAsync"은 안전하고 효율적인 비동기 코드 작성을 위해, 콜백 함수를 메서드 체인으로 연결하여 순차적으로 실행하고 처리 결과를 반환하는 비동기 함수입니다. 이를 통해 다양한 비동기 작업을 간편하게 처리할 수 있습니다.</p>
+<p align="center">"async-wave"는 안전하고 효율적인 비동기 코드 작성을 위해, 콜백 함수를 메서드 체인으로 연결하여 순차적으로 실행하고 처리 결과를 반환하는 비동기 함수입니다. 이를 통해 다양한 비동기 작업을 간편하게 처리할 수 있습니다.</p>
 
 - [🇺🇸 English](./README-US.md)
 
@@ -23,13 +23,13 @@
 Using npm:
 
 ```bash
-$ npm install promise-vigilant
+$ npm install async-wave
 ```
 
 Using yarn:
 
 ```bash
-$ yarn add promise-vigilant
+$ yarn add async-wave
 ```
 
 ### CDN
@@ -37,40 +37,40 @@ $ yarn add promise-vigilant
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/promise-vigilant@1.5.0/dist/index.js"></script>
+<script src="https://unpkg.com/async-wave@1.5.0/dist/index.js"></script>
 ```
 
 ## Usage
 
 ```typescript
-import { goAsync } from 'promise-vigilant';
+import { asyncWave } from 'async-wave';
 
 // Example 1: Basic Usage
-goAsync<number, number>(10, [async (num) => num + 5, (num) => num + 20], {
+asyncWave<number, number>(10, [async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
-goAsync<number>([10, async (num) => num + 5, (num) => num + 20], {
+asyncWave<number>([10, async (num) => num + 5, (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
 // Example 2: Using Functions and Async Functions
-goAsync<number, number>(() => 10, [(num) => num + 5, async (num) => num + 20], {
+asyncWave<number, number>(() => 10, [(num) => num + 5, async (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
-goAsync<number>([() => 10, (num) => num + 5, async (num) => num + 20], {
+asyncWave<number>([() => 10, (num) => num + 5, async (num) => num + 20], {
   onSuccess: (result) => {
     console.log(result); // 35
   },
 });
 
 // Example 3: Handling Errors
-goAsync(
+asyncWave(
   10,
   [
     () => {
@@ -84,7 +84,7 @@ goAsync(
     },
   }
 );
-goAsync(
+asyncWave(
   [
     10,
     () => {
@@ -102,7 +102,7 @@ goAsync(
 // Example 4: Propagating Errors to External Context
 (async function () {
   try {
-    await goAsync(10, [
+    await asyncWave(10, [
       () => {
         throw new Error('new Error2!');
       },
@@ -132,7 +132,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-goAsync<string>([placeId, requestPlaceDetailResultAPI, createAddress], {
+asyncWave<string>([placeId, requestPlaceDetailResultAPI, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, ErrorType.network);
   },
@@ -160,10 +160,10 @@ goAsync<string>([placeId, requestPlaceDetailResultAPI, createAddress], {
 
 ## Example
 
-With **promise-vigilant**
+With **async-wave**
 
 ```ts
-import { goAsync } from 'promise-vigilant';
+import { asyncWave } from 'async-wave';
 
 // Example 1: Using startVal, callbacks, and option
 const placeId = '12345';
@@ -184,7 +184,7 @@ const mapErrorHandler = (location: string, errorType: string) => {
   console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
 };
 
-goAsync<string, string>(placeId, [getPlaceDetailResult, createAddress], {
+asyncWave<string, string>(placeId, [getPlaceDetailResult, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, 'network');
   },
@@ -222,7 +222,7 @@ const handleError = (error: Error) => {
   // Handle the error
 };
 
-goAsync<string[]>([fetchData, processData], {
+asyncWave<string[]>([fetchData, processData], {
   onError: handleError,
   onSuccess: handleSuccess,
 })
@@ -236,4 +236,4 @@ goAsync<string[]>([fetchData, processData], {
 
 ## License
 
-[MIT](https://github.com/jeongbaebang/promise-vigilant/blob/main/LICENSE)
+[MIT](https://github.com/jeongbaebang/async-wave/blob/main/LICENSE)

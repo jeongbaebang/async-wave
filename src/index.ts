@@ -16,7 +16,7 @@ import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
  * @example
  * ```typescript
  * // Promisify and execute a sequence of callback functions
- * goAsync(placeId, [getPlaceDetailResult, createAddress], {
+ * asyncWave(placeId, [getPlaceDetailResult, createAddress], {
  *   onError: () => {
  *     return mapErrorHandler(location, ErrorType.network);
  *   },
@@ -25,7 +25,7 @@ import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
  *   },
  * });
  *
- * goAsync([placeId, getPlaceDetailResult, createAddress], {
+ * asyncWave([placeId, getPlaceDetailResult, createAddress], {
  *   onError: () => {
  *     return mapErrorHandler(location, ErrorType.network);
  *   },
@@ -36,19 +36,22 @@ import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
  * ```
  */
 
-function goAsync<SV, R>(
+function asyncWave<SV, R>(
   startVal: StartValue<SV>,
   callbacks: CallbackFns,
   option?: Options<R>
-): Promise<R>;
+): Promise<any>;
 
-function goAsync<R>(callbacks: CallbackFns, option?: Options<R>): Promise<R>;
+function asyncWave<R>(
+  callbacks: CallbackFns,
+  option?: Options<R>
+): Promise<any>;
 
-async function goAsync<SV, R>(
+async function asyncWave<SV, R>(
   startValue: StartValue<SV> | CallbackFns,
   callbacks: CallbackFns | Options<R> | undefined,
   option?: Options<R> | undefined
-): Promise<R> {
+): Promise<any> {
   let clonedArgs;
 
   if (Array.isArray(startValue)) {
@@ -82,4 +85,4 @@ async function goAsync<SV, R>(
     .finally(onSettled) as Promise<R>;
 }
 
-export { goAsync };
+export { asyncWave };

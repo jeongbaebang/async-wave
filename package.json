@@ -1,6 +1,6 @@
 {
-  "name": "promise-vigilant",
-  "version": "1.5.1",
+  "name": "async-wave",
+  "version": "1.5.3",
   "description": "A sequential method chain for asynchronous execution of callback functions, safely converting and passing any value as a promise.",
   "type": "commonjs",
   "main": "dist/index.js",
@@ -13,7 +13,7 @@
   "author": "jeongbaebang",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jeongbaebang/promise-vigilant.git"
+    "url": "https://github.com/jeongbaebang/async-wave.git"
   },
   "license": "MIT",
   "keywords": [
