@@ -6,7 +6,7 @@ import {
   nextPromise,
   promisify,
 } from '../utils/fn';
-import { goAsync } from '../index';
+import { asyncWave } from '../index';
 
 describe('promisify()', () => {
   test('원시값을 전달하면 함수를 반환한다.', () => {
@@ -126,42 +126,42 @@ describe('createPromiseRecursiveFn()', () => {
   });
 });
 
-describe('goAsync()', () => {
+describe('asyncWave()', () => {
   const fn1 = (arg0: number) => arg0 + 10;
   const fn2 = (arg0: number) => arg0 + 20;
 
   test('항상 프로미스를 반환해야 한다.', () => {
-    expect(isPromise(goAsync(10, [fn1, fn2]))).toBeTruthy();
-    expect(isPromise(goAsync(() => 10, [fn1, fn2]))).toBeTruthy();
-    expect(isPromise(goAsync(async () => 10, [fn1, fn2]))).toBeTruthy();
+    expect(isPromise(asyncWave(10, [fn1, fn2]))).toBeTruthy();
+    expect(isPromise(asyncWave(() => 10, [fn1, fn2]))).toBeTruthy();
+    expect(isPromise(asyncWave(async () => 10, [fn1, fn2]))).toBeTruthy();
   });
 
   test('두번째 인자로 배열에 전달한 함수가 차례대로 실행된다.', () => {
-    goAsync<number, number>(10, [fn1, fn2]).then((value) => {
+    asyncWave<number, number>(10, [fn1, fn2]).then((value) => {
       expect(value).toBe(40);
     });
 
-    goAsync<Promise<number>, number>(async () => 10, [fn1, fn2]).then(
+    asyncWave<Promise<number>, number>(async () => 10, [fn1, fn2]).then(
       (value) => {
         expect(value).toBe(40);
       }
     );
 
-    goAsync<number, number>(() => 10, [fn1, fn2]).then((value) => {
+    asyncWave<number, number>(() => 10, [fn1, fn2]).then((value) => {
       expect(value).toBe(40);
     });
   });
 
   test('첫번째 인수가 배열이라면 배열의 첫번째 요소를 첫 인자로 받아야 한다.', () => {
-    goAsync<number>([10, fn1, fn2]).then((value) => {
+    asyncWave<number>([10, fn1, fn2]).then((value) => {
       expect(value).toBe(40);
     });
   });
 
-  describe('goAsync Options Test', () => {
+  describe('asyncWave Options Test', () => {
     describe('onSuccess', () => {
       test('콜백 함수의 반환값이 매개변수로 전달된다.', () => {
-        goAsync<number, number>(10, [fn1, fn2], {
+        asyncWave<number, number>(10, [fn1, fn2], {
           onSuccess: (received) => {
             expect(received).toBe(40);
           },
@@ -172,7 +172,7 @@ describe('goAsync()', () => {
     describe('onError', () => {
       test('에러콜백의 반환값이 전달된다', () => {
         expect(() => {
-          goAsync<number, number>(10, [fn1, fn2], {
+          asyncWave<number, number>(10, [fn1, fn2], {
             onError: () => {
               return 'error';
             },
@@ -189,11 +189,11 @@ describe('goAsync()', () => {
       test('fulfilled, rejected 어떤 상태가 되어도 항상 콜백을 실행한다.', async () => {
         const fn = jest.fn();
 
-        await goAsync<number, number>(10, [fn1, fn2], {
+        await asyncWave<number, number>(10, [fn1, fn2], {
           onSettled: fn,
         });
 
-        await goAsync<number, number>(10, [throwError], {
+        await asyncWave<number, number>(10, [throwError], {
           onError: fn,
           onSettled: fn,
         });
