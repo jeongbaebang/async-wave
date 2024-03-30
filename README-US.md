@@ -87,8 +87,10 @@ getAvatarUrlfromGithub(USER_NAME)
   .finally(endLoadingIndicator);
 
 // with asyncWave
-startLoadingIndicator();
 asyncWave<GithubUser>([USER_NAME, getAvatarUrlfromGithub], {
+  onBefore: () => {
+    startLoadingIndicator();
+  },
   onSuccess: async (githubUser) => {
     await showAvatar(githubUser); // 핸들러 내부 에러도 캐치됩니다!
     console.log(`avatar_url: ${githubUser.avatar_url}`);

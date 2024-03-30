@@ -4,10 +4,13 @@ export type OnSuccess<T> = (received: T) => void;
 
 export type OnSettled = () => void;
 
+export type OnBefore = () => void;
+
 export interface Option<T> {
   onError: OnError;
   onSuccess: OnSuccess<T>;
   onSettled: OnSettled;
+  onBefore: OnBefore;
 }
 
 export type StartValue<SV> =
