@@ -5,11 +5,17 @@ import isFunction from 'lodash.isfunction';
 import isEqual from 'lodash.isequal';
 import isPromise from 'is-promise';
 
-import type { CallbackFns, OnError, OnSettled, OnSuccess } from './types';
+import type {
+  CallbackFns,
+  OnError,
+  OnSettled,
+  OnSuccess,
+  OnBefore,
+} from './types';
 
 export const createOn = {
   error(onError?: OnError) {
-    return (error: Error) => {
+    return (error: unknown) => {
       if (onError) {
         return onError(error);
       }
@@ -30,6 +36,13 @@ export const createOn = {
     return () => {
       if (onSettled) {
         onSettled();
+      }
+    };
+  },
+  before(onBefore?: OnBefore) {
+    return () => {
+      if (onBefore) {
+        onBefore();
       }
     };
   },
@@ -87,4 +100,25 @@ export function createPromiseRecursiveFn<R>(callbackFns: CallbackFns) {
       nextIndex(currentIndex),
     );
   };
+}
+
+export function guard<T extends any[], R>(
+  f: (...args: T) => R,
+  ef: (error: unknown) => void,
+  args: T,
+): R | void;
+
+// args를 받지 않는 경우
+export function guard<R>(f: () => R, ef: (error: unknown) => void): R | void;
+
+export function guard<T extends any[], R>(
+  f: (...args: T | []) => R,
+  ef: (error: unknown) => void,
+  args?: T,
+): R | void {
+  try {
+    return args ? f(...args) : f();
+  } catch (error) {
+    ef(error);
+  }
 }
