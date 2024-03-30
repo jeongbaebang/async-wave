@@ -37,7 +37,7 @@ $ yarn add async-wave
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/async-wave@1.5.0/dist/index.js"></script>
+<script src="https://unpkg.com/async-wave@{{VERSION}}/dist/index.js"></script>
 ```
 
 ## Usage
@@ -45,106 +45,68 @@ Using unpkg CDN:
 ```typescript
 import { asyncWave } from 'async-wave';
 
-// Example 1: Basic Usage
-asyncWave<number, number>(10, [async (num) => num + 5, (num) => num + 20], {
-  onSuccess: (result) => {
-    console.log(result); // 35
-  },
-});
-asyncWave<number>([10, async (num) => num + 5, (num) => num + 20], {
-  onSuccess: (result) => {
-    console.log(result); // 35
-  },
-});
+type GithubUser = { avatar_url: string };
 
-// Example 2: Using Functions and Async Functions
-asyncWave<number, number>(() => 10, [(num) => num + 5, async (num) => num + 20], {
-  onSuccess: (result) => {
-    console.log(result); // 35
+async function loadGithubUser(name: string) {
+  return await fetch(`https://api.github.com/users/${name}`);
+}
+
+async function loadJson(response: Response): Promise<GithubUser> {
+  return await response.json();
+}
+
+function showAvatar(githubUser: GithubUser): Promise<GithubUser> {
+  return new Promise(function (resolve) {
+    const img = document.createElement('img');
+    img.src = githubUser.avatar_url;
+    img.className = 'promise-avatar-example';
+    document.body.append(img);
+
+    setTimeout(() => {
+      img.remove();
+      resolve(githubUser);
+    }, 3000);
+  });
+}
+
+const USER_NAME = 'jeongbaebang';
+
+async function getAvatarUrlfromGithub(userName: string): Promise<GithubUser> {
+  const response = await loadGithubUser(userName);
+  const loadedJson = await loadJson(response);
+
+  return loadedJson;
+}
+
+// Promises chaining
+startLoadingIndicator();
+getAvatarUrlfromGithub(USER_NAME)
+  .then(showAvatar)
+  .then((githubUser) => console.log(`avatar_url: ${githubUser.avatar_url}`))
+  .catch((error) => console.error(error))
+  .finally(endLoadingIndicator);
+
+// with asyncWave
+asyncWave<GithubUser>([USER_NAME, getAvatarUrlfromGithub], {
+  onBefore: () => {
+    startLoadingIndicator();
   },
-});
-asyncWave<number>([() => 10, (num) => num + 5, async (num) => num + 20], {
-  onSuccess: (result) => {
-    console.log(result); // 35
+  onSuccess: async (githubUser) => {
+    await showAvatar(githubUser); // 핸들러 내부 에러도 캐치됩니다!
+    console.log(`avatar_url: ${githubUser.avatar_url}`);
   },
-});
-
-// Example 3: Handling Errors
-asyncWave(
-  10,
-  [
-    () => {
-      throw new Error('new Error!');
-    },
-    (num) => num + 20,
-  ],
-  {
-    onError: (error) => {
-      console.log(error.message); // new Error!
-    },
-  }
-);
-asyncWave(
-  [
-    10,
-    () => {
-      throw new Error('new Error!');
-    },
-    (num) => num + 20,
-  ],
-  {
-    onError: (error) => {
-      console.log(error.message); // new Error!
-    },
-  }
-);
-
-// Example 4: Propagating Errors to External Context
-(async function () {
-  try {
-    await asyncWave(10, [
-      () => {
-        throw new Error('new Error2!');
-      },
-      (num) => num + 20,
-    ]);
-  } catch (error: any) {
-    console.log(error.message); // new Error2!
-  }
-})();
-
-// Example 5: Using with External API and Options
-const placeId = '12345';
-const requestPlaceDetailResultAPI = async (placeId: string) => {
-  // Request place detail results from an API
-  return fetch(`https://api.example.com/places/${placeId}`)
-    .then((response) => response.json())
-    .catch((error) => {
-      throw new Error(`Failed to fetch place details: ${error.message}`);
-    });
-};
-const createAddress = async (placeDetails: any) => {
-  // Process place details and create an address
-  return `${placeDetails.street}, ${placeDetails.city}, ${placeDetails.country}`;
-};
-const mapErrorHandler = (location: string, errorType: string) => {
-  // Handle and map errors
-  console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
-};
-
-asyncWave<string>([placeId, requestPlaceDetailResultAPI, createAddress], {
-  onError: () => {
-    return mapErrorHandler(placeId, ErrorType.network);
+  onError: (error) => {
+    console.error(error);
   },
-  onSuccess: (data) => {
-    cache.set(data.place_id, data);
+  onSettled: () => {
+    endLoadingIndicator();
   },
 });
 ```
 
 ### Parameters
 
-- startValue: 프로미스로 변환될 첫 번째 값입니다. 만약 이 값이 함수나 프로미스가 아닌 경우, 자동으로 프로미스를 반환하는 함수로 변환됩니다. 첫 번째 인자로 전달된 값은 어떤 값이든 프로미스로 감싸져서 전달됩니다.
+- startValue (선택 사항): 프로미스로 변환될 첫 번째 값입니다. 만약 이 값이 함수나 프로미스가 아닌 경우, 자동으로 프로미스를 반환하는 함수로 변환됩니다. 첫 번째 인자로 전달된 값은 어떤 값이든 프로미스로 감싸져서 전달됩니다.
 
 **참고: 첫번째 인수는 어떤 값을 전달하든 항상 프로미스로 감싸져서 전달됩니다.**
 
@@ -160,30 +122,10 @@ asyncWave<string>([placeId, requestPlaceDetailResultAPI, createAddress], {
 
 ## Example
 
-With **async-wave**
-
-```ts
+```typescript
 import { asyncWave } from 'async-wave';
 
 // Example 1: Using startVal, callbacks, and option
-const placeId = '12345';
-const getPlaceDetailResult = async (placeId: string) => {
-  // Fetch place details from an API
-  return fetch(`https://api.example.com/places/${placeId}`)
-    .then((response) => response.json())
-    .catch((error) => {
-      throw new Error(`Failed to fetch place details: ${error.message}`);
-    });
-};
-const createAddress = async (placeDetails: any) => {
-  // Process place details and create an address
-  return `${placeDetails.street}, ${placeDetails.city}, ${placeDetails.country}`;
-};
-const mapErrorHandler = (location: string, errorType: string) => {
-  // Handle and map errors
-  console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
-};
-
 asyncWave<string, string>(placeId, [getPlaceDetailResult, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, 'network');
@@ -192,46 +134,13 @@ asyncWave<string, string>(placeId, [getPlaceDetailResult, createAddress], {
     console.log('Place details:', data);
     // Store place details in a cache
   },
-})
-  .then((result) => {
-    console.log('Final result:', result);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+});
 
 // Example 2: Using only callbacks and option
-const fetchData = async () => {
-  // Fetch data from an API
-  return fetch('https://api.example.com/data')
-    .then((response) => response.json())
-    .catch((error) => {
-      throw new Error(`Failed to fetch data: ${error.message}`);
-    });
-};
-const processData = async (data: any) => {
-  // Process data
-  return data.map((item: any) => item.name);
-};
-const handleSuccess = (result: string[]) => {
-  console.log('Processed data:', result);
-  // Do something with the processed data
-};
-const handleError = (error: Error) => {
-  console.error('Error occurred:', error);
-  // Handle the error
-};
-
 asyncWave<string[]>([fetchData, processData], {
   onError: handleError,
   onSuccess: handleSuccess,
-})
-  .then((result) => {
-    console.log('Final result:', result);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+});
 ```
 
 ## License
