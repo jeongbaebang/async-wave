@@ -44,7 +44,7 @@ export function nextIndex(currentIndex: number) {
 export function promisify<T>(
   target: T | (() => Promise<T>) | (() => T),
   convertFn = false,
-): (arg?: any) => Promise<T> {
+): (arg?: unknown) => Promise<T> {
   if (!isFunction(target)) {
     return async () => target;
   }
@@ -65,7 +65,7 @@ export function promisify<T>(
 
 export function nextPromise<T>(
   promise: Promise<T>,
-  nextFn: ((value: any) => any) | undefined,
+  nextFn: ((value: unknown) => unknown) | undefined,
 ) {
   return promise.then(nextFn);
 }
