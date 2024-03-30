@@ -1,8 +1,14 @@
+import axios from 'axios';
 import { describe, expect, test } from '@jest/globals';
 
 import { asyncWave } from '../index';
-import { getUser } from './example/getUsers';
 import { Response } from '../mocks/type';
+
+async function getUser() {
+  const { data } = await axios.get<Response>('/api/v1/users');
+
+  return data;
+}
 
 describe('e2e Test', () => {
   test('서버로 요청된 값이 올바르게 반환되어야 한다.', () => {
