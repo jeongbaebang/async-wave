@@ -40,18 +40,18 @@ import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
 function asyncWave<SV, R>(
   startVal: StartValue<SV>,
   callbacks: CallbackFns,
-  option?: Options<R>
+  option?: Options<R>,
 ): Promise<any>;
 
 function asyncWave<R>(
   callbacks: CallbackFns,
-  option?: Options<R>
+  option?: Options<R>,
 ): Promise<any>;
 
 async function asyncWave<SV, R>(
   startValue: StartValue<SV> | CallbackFns,
   callbacks: CallbackFns | Options<R> | undefined,
-  option?: Options<R> | undefined
+  option?: Options<R> | undefined,
 ): Promise<any> {
   let clonedArgs;
 
@@ -70,10 +70,10 @@ async function asyncWave<SV, R>(
     typeof startValue === 'object'
       ? (clonedArgs[0] as StartValue<SV>)
       : startValue,
-    true
+    true,
   );
   const promiseRecursiveFn = createPromiseRecursiveFn<R>(
-    clonedArgs[1] as CallbackFns
+    clonedArgs[1] as CallbackFns,
   );
   const options = clonedArgs[2] as Options<R>;
   const onError = createOn.error(options?.onError);

@@ -12,7 +12,7 @@ export const handlers = [
       ctx.json({
         total: 10,
         payload: payload,
-      })
+      }),
     );
   }),
 ];

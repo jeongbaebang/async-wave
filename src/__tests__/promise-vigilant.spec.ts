@@ -110,7 +110,7 @@ describe('nextPromise()', () => {
 describe('createPromiseRecursiveFn()', () => {
   test('함수를 호출하면 함수를 반환한다.', () => {
     expect(
-      typeof createPromiseRecursiveFn([() => '']) === 'function'
+      typeof createPromiseRecursiveFn([() => '']) === 'function',
     ).toBeTruthy();
   });
 
@@ -144,7 +144,7 @@ describe('asyncWave()', () => {
     asyncWave<Promise<number>, number>(async () => 10, [fn1, fn2]).then(
       (value) => {
         expect(value).toBe(40);
-      }
+      },
     );
 
     asyncWave<number, number>(() => 10, [fn1, fn2]).then((value) => {

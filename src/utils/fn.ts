@@ -43,8 +43,8 @@ export function nextIndex(currentIndex: number) {
 
 export function promisify<T>(
   target: T | (() => Promise<T>) | (() => T),
-  convertFn = false
-): () => Promise<T> {
+  convertFn = false,
+): (arg?: any) => Promise<T> {
   if (!isFunction(target)) {
     return async () => target;
   }
@@ -65,7 +65,7 @@ export function promisify<T>(
 
 export function nextPromise<T>(
   promise: Promise<T>,
-  nextFn: ((value: any) => any) | undefined
+  nextFn: ((value: any) => any) | undefined,
 ) {
   return promise.then(nextFn);
 }
@@ -76,7 +76,7 @@ export function createPromiseRecursiveFn<R>(callbackFns: CallbackFns) {
 
   return function recursive(
     promise: Promise<unknown>,
-    currentIndex = 0
+    currentIndex = 0,
   ): Promise<R> {
     if (isEqual(currentIndex, fnsLength)) {
       return promise as Promise<R>;
@@ -84,7 +84,7 @@ export function createPromiseRecursiveFn<R>(callbackFns: CallbackFns) {
 
     return recursive(
       nextPromise(promise, fns[currentIndex]),
-      nextIndex(currentIndex)
+      nextIndex(currentIndex),
     );
   };
 }

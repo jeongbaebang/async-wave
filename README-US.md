@@ -37,7 +37,7 @@ $ yarn add async-wave
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/async-wave@1.5.0/dist/index.js"></script>
+<script src="https://unpkg.com/async-wave@{{VERSION}}/dist/index.js"></script>
 ```
 
 ## Usage
@@ -45,106 +45,66 @@ Using unpkg CDN:
 ```typescript
 import { asyncWave } from 'async-wave';
 
-// Example 1: Basic Usage
-asyncWave(10, [async (num) => num + 5, (num) => num + 20], {
-  onSuccess: (result) => {
-    console.log(result); // 35
-  },
-});
-asyncWave([10, async (num) => num + 5, (num) => num + 20], {
-  onSuccess: (result) => {
-    console.log(result); // 35
-  },
-});
+type GithubUser = { avatar_url: string };
 
-// Example 2: Using Functions and Async Functions
-asyncWave(() => 10, [(num) => num + 5, async (num) => num + 20], {
-  onSuccess: (result) => {
-    console.log(result); // 35
+async function loadGithubUser(name: string) {
+  return await fetch(`https://api.github.com/users/${name}`);
+}
+
+async function loadJson(response: Response): Promise<GithubUser> {
+  return await response.json();
+}
+
+function showAvatar(githubUser: GithubUser): Promise<GithubUser> {
+  return new Promise(function (resolve) {
+    const img = document.createElement('img');
+    img.src = githubUser.avatar_url;
+    img.className = 'promise-avatar-example';
+    document.body.append(img);
+
+    setTimeout(() => {
+      img.remove();
+      resolve(githubUser);
+    }, 3000);
+  });
+}
+
+const USER_NAME = 'jeongbaebang';
+
+async function getAvatarUrlfromGithub(userName: string): Promise<GithubUser> {
+  const response = await loadGithubUser(userName);
+  const loadedJson = await loadJson(response);
+
+  return loadedJson;
+}
+
+// Promises chaining
+startLoadingIndicator();
+getAvatarUrlfromGithub(USER_NAME)
+  .then(showAvatar)
+  .then((githubUser) => console.log(`avatar_url: ${githubUser.avatar_url}`))
+  .catch((error) => console.error(error))
+  .finally(endLoadingIndicator);
+
+// with asyncWave
+startLoadingIndicator();
+asyncWave<GithubUser>([USER_NAME, getAvatarUrlfromGithub], {
+  onSuccess: async (githubUser) => {
+    await showAvatar(githubUser); // 핸들러 내부 에러도 캐치됩니다!
+    console.log(`avatar_url: ${githubUser.avatar_url}`);
   },
-});
-asyncWave([() => 10, (num) => num + 5, async (num) => num + 20], {
-  onSuccess: (result) => {
-    console.log(result); // 35
+  onError: (error) => {
+    console.error(error);
   },
-});
-
-// Example 3: Handling Errors
-asyncWave(
-  10,
-  [
-    () => {
-      throw new Error('new Error!');
-    },
-    (num) => num + 20,
-  ],
-  {
-    onError: (error) => {
-      console.log(error.message); // new Error!
-    },
-  }
-);
-asyncWave(
-  [
-    10,
-    () => {
-      throw new Error('new Error!');
-    },
-    (num) => num + 20,
-  ],
-  {
-    onError: (error) => {
-      console.log(error.message); // new Error!
-    },
-  }
-);
-
-// Example 4: Propagating Errors to External Context
-(async function () {
-  try {
-    await asyncWave(10, [
-      () => {
-        throw new Error('new Error2!');
-      },
-      (num) => num + 20,
-    ]);
-  } catch (error: any) {
-    console.log(error.message); // new Error2!
-  }
-})();
-
-// Example 5: Using with External API and Options
-const placeId = '12345';
-const requestPlaceDetailResultAPI = async (placeId: string) => {
-  // Request place detail results from an API
-  return fetch(`https://api.example.com/places/${placeId}`)
-    .then((response) => response.json())
-    .catch((error) => {
-      throw new Error(`Failed to fetch place details: ${error.message}`);
-    });
-};
-const createAddress = async (placeDetails: any) => {
-  // Process place details and create an address
-  return `${placeDetails.street}, ${placeDetails.city}, ${placeDetails.country}`;
-};
-const mapErrorHandler = (location: string, errorType: string) => {
-  // Handle and map errors
-  console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
-};
-
-asyncWave([placeId, requestPlaceDetailResultAPI, createAddress], {
-  onError: () => {
-    return mapErrorHandler(placeId, ErrorType.network);
-  },
-  onSuccess: (data) => {
-    cache.set(data.place_id, data);
+  onSettled: () => {
+    endLoadingIndicator();
   },
 });
 ```
 
 ### Parameters
 
-- startValue: The first value to be promisified. If the value is not a function or a promise, it will be automatically converted into a function that returns a promise.
+- startValue (optional): The first value to be promisified. If the value is not a function or a promise, it will be automatically converted into a function that returns a promise.
 
 **Note: If a function is passed as the first argument and its return value is not a promise, an error will be thrown.**
 
@@ -162,29 +122,11 @@ A Promise object that returns the result of the last promise in the chain.
 
 With **async-wave**
 
-```ts
+```typescript
 import { asyncWave } from 'async-wave';
 
 // Example 1: Using startVal, callbacks, and option
-const placeId = '12345';
-const getPlaceDetailResult = async (placeId: string) => {
-  // Fetch place details from an API
-  return fetch(`https://api.example.com/places/${placeId}`)
-    .then((response) => response.json())
-    .catch((error) => {
-      throw new Error(`Failed to fetch place details: ${error.message}`);
-    });
-};
-const createAddress = async (placeDetails: any) => {
-  // Process place details and create an address
-  return `${placeDetails.street}, ${placeDetails.city}, ${placeDetails.country}`;
-};
-const mapErrorHandler = (location: string, errorType: string) => {
-  // Handle and map errors
-  console.log(`Error occurred at location: ${location}, Type: ${errorType}`);
-};
-
-asyncWave(placeId, [getPlaceDetailResult, createAddress], {
+asyncWave<string, string>(placeId, [getPlaceDetailResult, createAddress], {
   onError: () => {
     return mapErrorHandler(placeId, 'network');
   },
@@ -192,46 +134,13 @@ asyncWave(placeId, [getPlaceDetailResult, createAddress], {
     console.log('Place details:', data);
     // Store place details in a cache
   },
-})
-  .then((result) => {
-    console.log('Final result:', result);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+});
 
 // Example 2: Using only callbacks and option
-const fetchData = async () => {
-  // Fetch data from an API
-  return fetch('https://api.example.com/data')
-    .then((response) => response.json())
-    .catch((error) => {
-      throw new Error(`Failed to fetch data: ${error.message}`);
-    });
-};
-const processData = async (data: any) => {
-  // Process data
-  return data.map((item: any) => item.name);
-};
-const handleSuccess = (result: string[]) => {
-  console.log('Processed data:', result);
-  // Do something with the processed data
-};
-const handleError = (error: Error) => {
-  console.error('Error occurred:', error);
-  // Handle the error
-};
-
-asyncWave([fetchData, processData], {
+asyncWave<string[]>([fetchData, processData], {
   onError: handleError,
   onSuccess: handleSuccess,
-})
-  .then((result) => {
-    console.log('Final result:', result);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+});
 ```
 
 ## License
