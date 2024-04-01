@@ -250,7 +250,7 @@ describe('asyncWave()', () => {
         expect(mockOnSuccessFn).not.toBeCalled();
       });
 
-      test('에러를 캐치하고 다음 핸들러가 동작하는지', async () => {
+      test('에러가 발생하면 다음 핸들러는 실행되지 않아야 한다.', async () => {
         const mockOnSuccessFn = jest.fn();
 
         asyncWave<number, number>(10, [throwError, mockOnSuccessFn], {
@@ -264,6 +264,8 @@ describe('asyncWave()', () => {
         } catch (error) {
           expect(error instanceof Error).toBeTruthy();
         }
+
+        expect(mockOnSuccessFn).not.toBeCalled();
       });
     });
 

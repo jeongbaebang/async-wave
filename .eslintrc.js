@@ -4,7 +4,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  ignorePatterns: ['coverage', 'dist'],
+  ignorePatterns: ['coverage'],
   plugins: ['@typescript-eslint', 'prettier'],
   extends: [
     'prettier',
