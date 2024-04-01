@@ -249,6 +249,22 @@ describe('asyncWave()', () => {
 
         expect(mockOnSuccessFn).not.toBeCalled();
       });
+
+      test('에러를 캐치하고 다음 핸들러가 동작하는지', async () => {
+        const mockOnSuccessFn = jest.fn();
+
+        asyncWave<number, number>(10, [throwError, mockOnSuccessFn], {
+          onError: () => {},
+        });
+
+        expect(mockOnSuccessFn).not.toBeCalled();
+
+        try {
+          await asyncWave<number, number>(10, [throwError, mockOnSuccessFn]);
+        } catch (error) {
+          expect(error instanceof Error).toBeTruthy();
+        }
+      });
     });
 
     describe('onSettled', () => {
