@@ -79,6 +79,7 @@ async function getAvatarUrlfromGithub(userName: string): Promise<GithubUser> {
 }
 
 // Promises chaining
+await setFetchLog();
 startLoadingIndicator();
 getAvatarUrlfromGithub(USER_NAME)
   .then(showAvatar)
@@ -88,11 +89,12 @@ getAvatarUrlfromGithub(USER_NAME)
 
 // with asyncWave
 asyncWave<GithubUser>([USER_NAME, getAvatarUrlfromGithub], {
-  onBefore: () => {
-    startLoadingIndicator();
+  onBefore: async () => {
+    await setFetchLog() // 핸들러 내부 에러도 캐치됩니다! [1]
+    startLoadingIndicator(); 
   },
   onSuccess: async (githubUser) => {
-    await showAvatar(githubUser); // 핸들러 내부 에러도 캐치됩니다!
+    await showAvatar(githubUser); // 핸들러 내부 에러도 캐치됩니다! [2]
     console.log(`avatar_url: ${githubUser.avatar_url}`);
   },
   onError: (error) => {

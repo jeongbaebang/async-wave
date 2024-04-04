@@ -40,9 +40,13 @@ export const createOn = {
     };
   },
   before(onBefore?: OnBefore) {
-    return () => {
+    return async () => {
       if (onBefore) {
-        onBefore();
+        try {
+          await onBefore();
+        } catch (error) {
+          return Promise.reject(error); // 에러가 상위 프로미스 체인에 제대로 전파하도록 처리
+        }
       }
     };
   },
@@ -102,23 +106,24 @@ export function createPromiseRecursiveFn<R>(callbackFns: CallbackFns) {
   };
 }
 
-export function guard<T extends any[], R>(
-  f: (...args: T) => R,
-  ef: (error: unknown) => void,
-  args: T,
-): R | void;
+// export function guard<T extends any[], R>(
+//   f: (...args: T) => R,
+//   ef: (error: unknown) => void,
+//   args: T,
+// ): R | Error;
 
-// args를 받지 않는 경우
-export function guard<R>(f: () => R, ef: (error: unknown) => void): R | void;
+// // args를 받지 않는 경우
+// export function guard<R>(f: () => R, ef: (error: unknown) => void): R | Error;
 
-export function guard<T extends any[], R>(
-  f: (...args: T | []) => R,
-  ef: (error: unknown) => void,
-  args?: T,
-): R | void {
-  try {
-    return args ? f(...args) : f();
-  } catch (error) {
-    ef(error);
-  }
-}
+// export function guard<T extends any[], R>(
+//   f: (...args: T | []) => R,
+//   ef: (error: unknown) => void,
+//   args?: T,
+// ) {
+//   try {
+//     return args ? f(...args) : f();
+//   } catch (error) {
+//     ef(error);
+//     return new Error();
+//   }
+// }

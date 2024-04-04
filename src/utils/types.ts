@@ -4,7 +4,7 @@ export type OnSuccess<T> = (received: T) => void;
 
 export type OnSettled = () => void;
 
-export type OnBefore = () => void;
+export type OnBefore = () => Promise<void>;
 
 export interface Option<T> {
   onError: OnError;

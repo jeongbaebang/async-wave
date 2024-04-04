@@ -1,12 +1,7 @@
 import clonedeep from 'lodash.clonedeep';
 
 import type { CallbackFns, Options, StartValue } from './utils/types';
-import {
-  createOn,
-  createPromiseRecursiveFn,
-  guard,
-  promisify,
-} from './utils/fn';
+import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
 
 /**
  * @see https://github.com/jeongbaebang/async-wave
@@ -81,10 +76,11 @@ async function asyncWave<SV, R>(
   const onSuccess = createOn.success(options?.onSuccess);
   const onSettled = createOn.settled(options?.onSettled);
   const onBeforeStart = createOn.before(options?.onBefore);
+  const startPromiseRecursiveFn = () => promiseRecursiveFn(firstPromiseFn());
 
-  guard(onBeforeStart, onError);
-
-  return promiseRecursiveFn(firstPromiseFn())
+  return Promise.resolve()
+    .then(onBeforeStart)
+    .then(startPromiseRecursiveFn)
     .then(onSuccess)
     .catch(onError)
     .finally(onSettled) as Promise<R>;

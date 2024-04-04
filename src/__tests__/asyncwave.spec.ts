@@ -165,9 +165,9 @@ describe('asyncWave()', () => {
     describe('beforeStart', () => {
       const mockBeforeStart = jest.fn();
 
-      test('메서드 체이닝이 실행되기 전에 가장 먼저 실행되어야 한다.', () => {
-        asyncWave<number, number>(10, [fn1, fn2], {
-          onBefore: () => {
+      test('메서드 체이닝이 실행되기 전에 가장 먼저 실행되어야 한다.', async () => {
+        await asyncWave<number, number>(10, [fn1, fn2], {
+          onBefore: async () => {
             mockBeforeStart();
           },
           onSuccess: (received) => {
@@ -186,25 +186,67 @@ describe('asyncWave()', () => {
         ).rejects.toThrowError('new Error');
       });
 
-      test('에러 핸들러를 전달하면 외부로 방출되지 않고 캐치되어야 한다.', () => {
+      test('에러 핸들러를 전달하면 외부로 방출되지 않고 캐치되어야 한다.', async () => {
         const onErrorMockFn = jest.fn();
 
-        asyncWave<number, number>(10, [fn1], {
+        await asyncWave<number, number>(10, [fn1], {
           onBefore: () => throwError(),
           onError: () => onErrorMockFn(),
         });
 
         expect(onErrorMockFn).toHaveBeenCalled();
       });
+
+      test('에러가 발생하면 핸들러가 실행되지 말아야 한다.', async () => {
+        const onHandlerMockFn = jest.fn();
+        const onSuccessMockFn = jest.fn();
+        const onErrorMockFn = jest.fn();
+
+        await asyncWave<number, number>(10, [onHandlerMockFn, fn1], {
+          onBefore: () => throwError(),
+          onError: () => onErrorMockFn(),
+          onSuccess: () => onSuccessMockFn(),
+        });
+
+        expect(onErrorMockFn).toHaveBeenCalled();
+        expect(onHandlerMockFn).not.toHaveBeenCalled();
+        expect(onSuccessMockFn).not.toHaveBeenCalled();
+      });
     });
 
     describe('onSuccess', () => {
-      test('콜백 함수의 반환값이 매개변수로 전달된다.', () => {
+      test('콜백 함수의 반환값이 매개변수로 전달된다.', async () => {
         asyncWave<number, number>(10, [fn1, fn2], {
           onSuccess: (received) => {
             expect(received).toBe(40);
           },
         });
+      });
+
+      test('프로미스값을 반환해야 한다.', async () => {
+        asyncWave<number, number>(10, [fn1, fn2], {
+          onSuccess: (received) => {
+            return received + 10;
+          },
+        }).then((value) => {
+          expect(value).toBe(50);
+        });
+
+        asyncWave<number, number>(10, [fn1, fn2]).then((value1) => {
+          expect(value1).toBe(40);
+        });
+
+        const value2 = await asyncWave<number, number>(10, [fn1, fn2], {
+          onSuccess: (received) => {
+            return received;
+          },
+        });
+
+        expect(value2).toBe(40);
+
+        const value3 = await asyncWave<number, number>(10, [fn1, fn2]);
+
+        expect(value3).toBe(40);
       });
     });
 
@@ -266,6 +308,21 @@ describe('asyncWave()', () => {
         }
 
         expect(mockOnSuccessFn).not.toBeCalled();
+      });
+
+      test('에러가 성공적으로 처리되면 onSuccess 핸들러를 제외한 가장 가까운 then 핸들러로 제어흐름이 넘어가야 한다.', async () => {
+        const mockOnSuccessFn = jest.fn();
+
+        await asyncWave<number, number>(10, [throwError, fn1], {
+          onError: (error) => {
+            expect(error instanceof Error).toBeTruthy();
+          },
+          onSuccess: () => {
+            mockOnSuccessFn(); // 실행되지 않는다.
+          },
+        }).then(mockOnSuccessFn);
+
+        expect(mockOnSuccessFn).toBeCalledTimes(1);
       });
     });
 

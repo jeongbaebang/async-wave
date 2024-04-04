@@ -88,11 +88,12 @@ getAvatarUrlfromGithub(USER_NAME)
 
 // with asyncWave
 asyncWave<GithubUser>([USER_NAME, getAvatarUrlfromGithub], {
-  onBefore: () => {
-    startLoadingIndicator();
+  onBefore: async () => {
+    await setFetchLog() // Errors inside the handler are also caught! [1]
+    startLoadingIndicator(); 
   },
   onSuccess: async (githubUser) => {
-    await showAvatar(githubUser); // 핸들러 내부 에러도 캐치됩니다!
+    await showAvatar(githubUser); // Errors inside the handler are also caught! [2]
     console.log(`avatar_url: ${githubUser.avatar_url}`);
   },
   onError: (error) => {

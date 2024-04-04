@@ -4,27 +4,36 @@ import { describe, expect, test } from '@jest/globals';
 import { asyncWave } from '../index';
 import { Response } from '../mocks/type';
 
-async function getUser() {
-  const { data } = await axios.get<Response>('/api/v1/users');
+async function getUser(isError?: boolean) {
+  const { data } = await axios.get<Response>('/api/v1/users', {
+    params: {
+      isError: isError,
+    },
+  });
 
   return data;
 }
 
 describe('e2e Test', () => {
-  test('특정 함수가 실행되고 난뒤 실행되어야 한다.', () => {
+  test('특정 함수가 실행되고 난뒤 실행되어야 한다.', async () => {
     const delay = 300;
     const mockLoadingIndicator = jest.fn();
+    const onSuccessMockFn = jest.fn();
 
-    asyncWave<Response>([getUser], {
-      onBefore: () => {
+    await asyncWave<Response>([getUser], {
+      onBefore: async () => {
         mockLoadingIndicator(delay);
+        expect(onSuccessMockFn).not.toBeCalledWith();
       },
       onSuccess: (data) => {
+        onSuccessMockFn();
+        expect(mockLoadingIndicator).toBeCalledWith(delay);
         expect(data.total).toBe(10);
         expect(data.payload).toHaveLength(10);
       },
     });
 
+    expect(onSuccessMockFn).toBeCalledWith();
     expect(mockLoadingIndicator).toBeCalledWith(delay);
   });
 
@@ -52,23 +61,48 @@ describe('e2e Test', () => {
       },
     });
 
-    asyncWave<Promise<Response>, Response>(getUser, [findUser(4)], {
+    asyncWave<Promise<Response | undefined>, Response>(getUser, [findUser(4)], {
       onSuccess: ({ payload }) => {
         expect(payload).toHaveLength(1);
       },
     });
   });
 
-  test('에러를 올바르게 캐치해야 한다.', () => {
-    const throwError = () => {
-      throw new Error('Network Error');
+  describe('예외 테스트', () => {
+    const errorMessage = `Request failed with status code 403`;
+    const getWrongUser = async () => {
+      await getUser(true);
     };
 
-    asyncWave<Response>([getUser, throwError], {
-      onError: (error) => {
+    test('에러를 올바르게 캐치해야 한다.', () => {
+      asyncWave<Response>([getWrongUser], {
+        onError: (error) => {
+          expect(error).toBeInstanceOf(Error);
+          expect(error.message).toContain(errorMessage);
+        },
+      });
+
+      asyncWave<number, number>(10, [() => {}], {
+        onBefore: async () => {
+          await getUser(true);
+        },
+      }).catch((error) => {
         expect(error).toBeInstanceOf(Error);
-        expect(error.message).toContain('Network Error');
-      },
+        expect(error.message).toContain(errorMessage);
+      });
+    });
+
+    test('onBefore 핸들러에서 발생하는 에러도 캐치해야 한다.', async () => {
+      const onErrorMockFn = jest.fn();
+
+      await asyncWave<Response>([getUser], {
+        onBefore: async () => {
+          await getWrongUser();
+        },
+        onError: () => onErrorMockFn(),
+      });
+
+      expect(onErrorMockFn).toHaveBeenCalled();
     });
   });
 });
