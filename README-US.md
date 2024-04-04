@@ -47,7 +47,7 @@ import { asyncWave } from 'async-wave';
 
 type GithubUser = { avatar_url: string };
 
-async function loadGithubUser(name: string) {
+async function getGithubUser(name: string) {
   return await fetch(`https://api.github.com/users/${name}`);
 }
 
@@ -71,23 +71,18 @@ function showAvatar(githubUser: GithubUser): Promise<GithubUser> {
 
 const USER_NAME = 'jeongbaebang';
 
-async function getAvatarUrlfromGithub(userName: string): Promise<GithubUser> {
-  const response = await loadGithubUser(userName);
-  const loadedJson = await loadJson(response);
-
-  return loadedJson;
-}
-
 // Promises chaining
+await setFetchLog();
 startLoadingIndicator();
-getAvatarUrlfromGithub(USER_NAME)
+getGithubUser(USER_NAME)
+  .then(loadJson)
   .then(showAvatar)
   .then((githubUser) => console.log(`avatar_url: ${githubUser.avatar_url}`))
   .catch((error) => console.error(error))
   .finally(endLoadingIndicator);
 
 // with asyncWave
-asyncWave<GithubUser>([USER_NAME, getAvatarUrlfromGithub], {
+asyncWave<GithubUser>([USER_NAME, getGithubUser, loadJson], {
   onBefore: async () => {
     await setFetchLog() // Errors inside the handler are also caught! [1]
     startLoadingIndicator(); 
@@ -113,6 +108,7 @@ asyncWave<GithubUser>([USER_NAME, getAvatarUrlfromGithub], {
 
 - callbacks: An array of callback functions to be executed in the then method.
 - option (optional): An optional object that provides the following callback functions:
+  - onBefore: A function that runs before the promise starts. This function must be passed to the async function.
   - onError: A function triggered when the promise reaches a rejected state.
   - onSuccess: A function triggered when the promise reaches a resolved state. The result of the last promise is passed as an argument to this function.
   - onSettled: A function triggered when the promise reaches either a resolved or a rejected state.

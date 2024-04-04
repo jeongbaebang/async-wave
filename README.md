@@ -47,7 +47,7 @@ import { asyncWave } from 'async-wave';
 
 type GithubUser = { avatar_url: string };
 
-async function loadGithubUser(name: string) {
+async function getGithubUser(name: string) {
   return await fetch(`https://api.github.com/users/${name}`);
 }
 
@@ -71,24 +71,18 @@ function showAvatar(githubUser: GithubUser): Promise<GithubUser> {
 
 const USER_NAME = 'jeongbaebang';
 
-async function getAvatarUrlfromGithub(userName: string): Promise<GithubUser> {
-  const response = await loadGithubUser(userName);
-  const loadedJson = await loadJson(response);
-
-  return loadedJson;
-}
-
 // Promises chaining
 await setFetchLog();
 startLoadingIndicator();
-getAvatarUrlfromGithub(USER_NAME)
+getGithubUser(USER_NAME)
+  .then(loadJson)
   .then(showAvatar)
   .then((githubUser) => console.log(`avatar_url: ${githubUser.avatar_url}`))
   .catch((error) => console.error(error))
   .finally(endLoadingIndicator);
 
 // with asyncWave
-asyncWave<GithubUser>([USER_NAME, getAvatarUrlfromGithub], {
+asyncWave<GithubUser>([USER_NAME, getGithubUser, loadJson], {
   onBefore: async () => {
     await setFetchLog() // 핸들러 내부 에러도 캐치됩니다! [1]
     startLoadingIndicator(); 
@@ -114,6 +108,7 @@ asyncWave<GithubUser>([USER_NAME, getAvatarUrlfromGithub], {
 
 - callbacks: then 메서드에서 실행할 콜백 함수들의 배열입니다.
 - option (선택 사항): 다음 콜백 함수들을 제공하는 선택적인 객체입니다:
+  - onBefore: 프로미스가 시작되기 전에 실행되는 함수입니다. 해당 함수는 async 함수로 전달해야 합니다.
   - onError: 프로미스가 거부된 상태에 도달했을 때 실행되는 함수입니다.
   - onSuccess: 프로미스가 해결된 상태에 도달했을 때 실행되는 함수입니다. 마지막 프로미스의 결과가 이 함수의 인자로 전달됩니다.
   - onSettled: 프로미스가 해결되거나 거부된 상태에 도달했을 때 실행되는 함수입니다.

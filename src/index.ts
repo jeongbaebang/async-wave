@@ -10,7 +10,7 @@ import { createOn, createPromiseRecursiveFn, promisify } from './utils/fn';
  * **Note:** Regardless of the value passed as the first argument, it will always be wrapped in a promise and passed as an argument.
  *
  * @param callbacks An array of callback functions to be executed in the `then` method.
- * @param option (optional): An optional object that provides onError, onSettled, and onSuccess callback functions.
+ * @param option (optional): An optional object that provides onBefore, onError, onSettled, and onSuccess callback functions.
  * @returns `Promise` object.
  *
  * @example
