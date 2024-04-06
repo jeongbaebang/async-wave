@@ -84,8 +84,8 @@ getGithubUser(USER_NAME)
 // with asyncWave
 asyncWave<GithubUser>([USER_NAME, getGithubUser, loadJson], {
   onBefore: async () => {
-    await setFetchLog() // 핸들러 내부 에러도 캐치됩니다! [1]
-    startLoadingIndicator(); 
+    await setFetchLog(); // 핸들러 내부 에러도 캐치됩니다! [1]
+    startLoadingIndicator();
   },
   onSuccess: async (githubUser) => {
     await showAvatar(githubUser); // 핸들러 내부 에러도 캐치됩니다! [2]

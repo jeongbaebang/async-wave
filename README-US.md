@@ -84,8 +84,8 @@ getGithubUser(USER_NAME)
 // with asyncWave
 asyncWave<GithubUser>([USER_NAME, getGithubUser, loadJson], {
   onBefore: async () => {
-    await setFetchLog() // Errors inside the handler are also caught! [1]
-    startLoadingIndicator(); 
+    await setFetchLog(); // Errors inside the handler are also caught! [1]
+    startLoadingIndicator();
   },
   onSuccess: async (githubUser) => {
     await showAvatar(githubUser); // Errors inside the handler are also caught! [2]
