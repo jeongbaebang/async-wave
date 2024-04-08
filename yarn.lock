@@ -807,9 +807,9 @@
   integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
 
 "@types/lodash.add@^3.7.7":
-  version "3.7.7"
-  resolved "https://registry.yarnpkg.com/@types/lodash.add/-/lodash.add-3.7.7.tgz#f2b78cda324d227a01889c074e466c43a1e563fc"
-  integrity sha512-3K+p7Tn+SlDY4B9H24ONV/HdDx7fTAyw0mioxDZzD/byYaRZ3vHQ8V+d4mbzEr3okRmSdFVv5T5bLG03UqEkiQ==
+  version "3.7.9"
+  resolved "https://registry.yarnpkg.com/@types/lodash.add/-/lodash.add-3.7.9.tgz#122a6c92f323323039b68cb57536d6dcab25c0c7"
+  integrity sha512-bB8Wf/WOgrOPeid1tgj2rGKwZEMDLXzJjUp0/RsBY+gxYgFhGlQqDEuYExdIA1lrzHoygqmOUd0AQSBh3aUk4g==
   dependencies:
     "@types/lodash" "*"
 
