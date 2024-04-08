@@ -828,9 +828,9 @@
     "@types/lodash" "*"
 
 "@types/lodash.isfunction@^3.0.7":
-  version "3.0.7"
-  resolved "https://registry.yarnpkg.com/@types/lodash.isfunction/-/lodash.isfunction-3.0.7.tgz#a4be875f62bea0d3e52ffb72d5276314ff4ed99b"
-  integrity sha512-kpYexfS7OvD8Gb74F2ogdHVbeWpYsiP8cadpIBBbJivG0i7kQ0xEn3V78jhFiJN6HfZhggWhbP659+HYMnFFHw==
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/@types/lodash.isfunction/-/lodash.isfunction-3.0.9.tgz#527e51ab6638b38c65a03ec218232b1a787cc9bc"
+  integrity sha512-BLaDvlY09jnPND1wxlGXPrPl2CN4M7qGRah7Tb/rtB1vnLyZmtcw3FRPSUkDsd5n4e+2E5BBrr0ICfYR+S4hZQ==
   dependencies:
     "@types/lodash" "*"
 
