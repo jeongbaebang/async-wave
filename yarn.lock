@@ -835,9 +835,9 @@
     "@types/lodash" "*"
 
 "@types/lodash.size@^4.2.7":
-  version "4.2.7"
-  resolved "https://registry.yarnpkg.com/@types/lodash.size/-/lodash.size-4.2.7.tgz#46420d9e0d174f0c6652b6efcd9691003b07bece"
-  integrity sha512-hj3Kts7il4eWDTQ/ex6yfDGR9Z8evE79604rpCkzIVwMlmh/U+shBoAyTkRgj0Sd8fEOrqM4IqdLOWQB5LhKRw==
+  version "4.2.9"
+  resolved "https://registry.yarnpkg.com/@types/lodash.size/-/lodash.size-4.2.9.tgz#af70539bd62ef5c408c2ac9d8c15eb3fdd92fe7e"
+  integrity sha512-Biwy2iatGelFB7lWzyrOjUKnbSZMgOZfT2zHhq9HjJDoPZiRGJqwk1TsCG33wLEWs7+YbzyaAyOQw4NddtwyOQ==
   dependencies:
     "@types/lodash" "*"
 
