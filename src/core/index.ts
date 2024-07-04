@@ -8,10 +8,8 @@ import { createOn, createPromiseRecursiveFn, promisify } from '../utils';
  * @param callbackFns An array of callback functions to be executed in the `then` method.
  * @param option (optional): An optional object that provides onBefore, onError, onSettled, and onSuccess callback functions.
  * @returns `Promise` object.
- *
  * @example
  * ```typescript
- *
  * asyncWave([placeId, getPlaceDetailResult, createAddress], {
  *   onError: () => {
  *     return mapErrorHandler(location, ErrorType.network);
@@ -24,12 +22,15 @@ import { createOn, createPromiseRecursiveFn, promisify } from '../utils';
  */
 
 async function asyncWave<R>(
-  callbackFns: CallbackFns,
-  option?: Options<R> | undefined,
+  _callbackFns: CallbackFns,
+  _option?: Options<R> | undefined,
 ): Promise<R> {
   // 1. 시작 값과 옵션을 분리
+  const callbackFns = [..._callbackFns];
   const callbackOptions =
-    !Array.isArray(option) && typeof option === 'object' ? option : undefined;
+    !Array.isArray(_option) && typeof _option === 'object'
+      ? _option
+      : undefined;
   const clonedArgs = [
     callbackFns.shift(),
     ...[callbackFns, callbackOptions].map(clonedeep),

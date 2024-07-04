@@ -114,6 +114,8 @@ export function createPromiseRecursiveFn<R>(callbackFns: CallbackFns) {
 export class PromiseCircularityError extends Error {
   constructor(message: string) {
     super(message);
+    this.message = message;
+    this.name = 'PromiseCircularityError';
   }
 }
 
