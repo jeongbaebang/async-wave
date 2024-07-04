@@ -1,6 +1,6 @@
 {
   "name": "async-wave",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "A sequential method chain for asynchronous execution of callback functions, safely converting and passing any value as a promise.",
   "type": "commonjs",
   "main": "dist/index.js",
@@ -14,9 +14,13 @@
     "coverage": "jest --coverage"
   },
   "author": "jeongbaebang",
+  "homepage": "https://github.com/jeongbaebang/async-wave",
   "repository": {
     "type": "git",
     "url": "https://github.com/jeongbaebang/async-wave.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jeongbaebang/async-wave/issues"
   },
   "license": "MIT",
   "keywords": [
