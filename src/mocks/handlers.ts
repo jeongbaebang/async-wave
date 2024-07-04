@@ -3,10 +3,10 @@ import { rest } from 'msw';
 import { Response } from './type';
 import { payload } from './db';
 
-const DEFUALT_URL = 'http://localhost';
+const DEFAULT_URL = 'http://localhost';
 
 export const handlers = [
-  rest.get<Response>(`${DEFUALT_URL}/api/v1/users`, (req, res, ctx) => {
+  rest.get<Response>(`${DEFAULT_URL}/api/v1/users`, (req, res, ctx) => {
     const isError = req.url.searchParams.get('isError');
 
     if (isError) {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { describe, expect, test } from '@jest/globals';
 
-import { asyncWave } from '../index';
+import { asyncWave } from '../core';
 import { Response } from '../mocks/type';
 
 async function getUser(isError?: boolean) {
@@ -61,7 +61,7 @@ describe('e2e Test', () => {
       },
     });
 
-    asyncWave<Promise<Response | undefined>, Response>(getUser, [findUser(4)], {
+    asyncWave<Response>([getUser, findUser(4)], {
       onSuccess: ({ payload }) => {
         expect(payload).toHaveLength(1);
       },
@@ -75,14 +75,30 @@ describe('e2e Test', () => {
     };
 
     test('에러를 올바르게 캐치해야 한다.', () => {
-      asyncWave<Response>([getWrongUser], {
+      const fn1 = (arg0: number) => arg0 + 10;
+
+      asyncWave([getWrongUser, 10, fn1], {
         onError: (error) => {
           expect(error).toBeInstanceOf(Error);
           expect(error.message).toContain(errorMessage);
         },
       });
 
-      asyncWave<number, number>(10, [() => {}], {
+      asyncWave([10, getWrongUser, fn1], {
+        onError: (error) => {
+          expect(error).toBeInstanceOf(Error);
+          expect(error.message).toContain(errorMessage);
+        },
+      });
+
+      asyncWave([10, fn1, getWrongUser], {
+        onError: (error) => {
+          expect(error).toBeInstanceOf(Error);
+          expect(error.message).toContain(errorMessage);
+        },
+      });
+
+      asyncWave([10, () => {}], {
         onBefore: async () => {
           await getUser(true);
         },

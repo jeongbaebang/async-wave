@@ -11,11 +11,11 @@ import type {
   OnSettled,
   OnSuccess,
   OnBefore,
-} from './types';
+} from '../@types';
 
 export const createOn = {
   error(onError?: OnError) {
-    return (error: unknown) => {
+    return (error: PromiseCircularityError) => {
       if (onError) {
         return onError(error);
       }
@@ -88,22 +88,33 @@ export function nextPromise<T>(
 }
 
 export function createPromiseRecursiveFn<R>(callbackFns: CallbackFns) {
+  const FIRST_PROMISE = 0;
   const fns = clonedeep(callbackFns);
   const fnsLength = size(fns);
 
   return function recursive(
     promise: Promise<unknown>,
-    currentIndex = 0,
+    currentIndex = FIRST_PROMISE,
   ): Promise<R> {
     if (isEqual(currentIndex, fnsLength)) {
       return promise as Promise<R>;
     }
 
     return recursive(
-      nextPromise(promise, fns[currentIndex]),
+      nextPromise(promise, fns[currentIndex]).catch((error: unknown) => {
+        throw new PromiseCircularityError(
+          error instanceof Error ? error.message : 'Promise Circularity Error',
+        );
+      }),
       nextIndex(currentIndex),
     );
   };
+}
+
+export class PromiseCircularityError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
 }
 
 // export function guard<T extends any[], R>(
