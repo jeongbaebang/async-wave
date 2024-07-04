@@ -1,6 +1,6 @@
 <h1 align="center">
    <b>
-      <img src="assets/async-wave.png" alt="async-wave logo" style="height: 500px; width:500px; border-radius: 50px;"/><br>
+      <img src="assets/async-wave.png" alt="async-wave logo" style="height: 300px; width:300px; border-radius: 50px;"/><br>
    </b>
 </h1>
 
@@ -14,7 +14,6 @@
   - [Package manager](#package-manager)
   - [CDN](#cdn)
 - [Usage](#usage)
-- [Example](#example)
 
 ## Installing
 
@@ -40,37 +39,10 @@ Using unpkg CDN:
 <script src="https://unpkg.com/async-wave@{{VERSION}}/dist/index.js"></script>
 ```
 
-## Usage
+# Usage
 
-```typescript
-import { asyncWave } from 'async-wave';
-
-type GithubUser = { avatar_url: string };
-
-async function getGithubUser(name: string) {
-  return await fetch(`https://api.github.com/users/${name}`);
-}
-
-async function loadJson(response: Response): Promise<GithubUser> {
-  return await response.json();
-}
-
-function showAvatar(githubUser: GithubUser): Promise<GithubUser> {
-  return new Promise(function (resolve) {
-    const img = document.createElement('img');
-    img.src = githubUser.avatar_url;
-    img.className = 'promise-avatar-example';
-    document.body.append(img);
-
-    setTimeout(() => {
-      img.remove();
-      resolve(githubUser);
-    }, 3000);
-  });
-}
-
-const USER_NAME = 'jeongbaebang';
-
+### Before
+```ts
 // Promises chaining
 await setFetchLog();
 startLoadingIndicator();
@@ -80,8 +52,13 @@ getGithubUser(USER_NAME)
   .then((githubUser) => console.log(`avatar_url: ${githubUser.avatar_url}`))
   .catch((error) => console.error(error))
   .finally(endLoadingIndicator);
+```
 
-// with asyncWave
+### After
+```typescript
+import { asyncWave } from 'async-wave';
+
+// if a function is passed as the first argument and its return value is not a promise, an error will be thrown.
 asyncWave<GithubUser>([USER_NAME, getGithubUser, loadJson], {
   onBefore: async () => {
     await setFetchLog(); // Errors inside the handler are also caught! [1]
@@ -101,12 +78,7 @@ asyncWave<GithubUser>([USER_NAME, getGithubUser, loadJson], {
 ```
 
 ### Parameters
-
-- startValue (optional): The first value to be promisified. If the value is not a function or a promise, it will be automatically converted into a function that returns a promise.
-
-**Note: If a function is passed as the first argument and its return value is not a promise, an error will be thrown.**
-
-- callbacks: An array of callback functions to be executed in the then method.
+- callbacks: An array of callback functions to be executed in the then method. (**Note: If a function is passed as the first argument and its return value is not a promise, an error will be thrown.**)
 - option (optional): An optional object that provides the following callback functions:
   - onBefore: A function that runs before the promise starts. This function must be passed to the async function.
   - onError: A function triggered when the promise reaches a rejected state.
@@ -116,32 +88,3 @@ asyncWave<GithubUser>([USER_NAME, getGithubUser, loadJson], {
 ### Return Value
 
 A Promise object that returns the result of the last promise in the chain.
-
-## Example
-
-With **async-wave**
-
-```typescript
-import { asyncWave } from 'async-wave';
-
-// Example 1: Using startVal, callbacks, and option
-asyncWave<string, string>(placeId, [getPlaceDetailResult, createAddress], {
-  onError: () => {
-    return mapErrorHandler(placeId, 'network');
-  },
-  onSuccess: (data) => {
-    console.log('Place details:', data);
-    // Store place details in a cache
-  },
-});
-
-// Example 2: Using only callbacks and option
-asyncWave<string[]>([fetchData, processData], {
-  onError: handleError,
-  onSuccess: handleSuccess,
-});
-```
-
-## License
-
-[MIT](https://github.com/jeongbaebang/async-wave/blob/main/LICENSE)

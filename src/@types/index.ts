@@ -1,4 +1,6 @@
-export type OnError = (error: any) => void;
+import type { PromiseCircularityError } from '../utils';
+
+export type OnError = (error: PromiseCircularityError) => void;
 
 export type OnSuccess<T> = (received: T) => void;
 
