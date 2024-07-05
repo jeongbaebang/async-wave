@@ -1,6 +1,6 @@
 {
   "name": "async-wave",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "description": "A sequential method chain for asynchronous execution of callback functions, safely converting and passing any value as a promise.",
   "main": "dist/bundle.js",
   "types": "dist/types/index.d.ts",
