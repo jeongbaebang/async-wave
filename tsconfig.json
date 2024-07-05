@@ -1,28 +1,17 @@
 {
-  "files": ["src/index.ts"],
   "compilerOptions": {
+    "moduleResolution": "node",
     "target": "ES6",
-    "module": "CommonJS",
-    "declaration": true,
-    "outDir": "./dist",
-    "noEmit": false,
+    "module": "ESNext",
+    "declaration": true, // 타입 선언 파일 생성
+    "declarationDir": "./dist/types", // 타입 선언 파일 출력 디렉토리
+    "outDir": "./dist", // 컴파일된 파일 출력 디렉토리
+    "noEmit": false, // 파일 출력 활성화
     "strict": true,
-    "noImplicitAny": false,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitReturns": false,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
-  }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
