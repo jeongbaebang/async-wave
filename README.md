@@ -42,6 +42,7 @@ Using unpkg CDN:
 ## Usage
 
 ### Before
+
 ```ts
 // Promises chaining
 await setFetchLog();
@@ -55,6 +56,7 @@ getGithubUser(USER_NAME)
 ```
 
 ### After
+
 ```typescript
 import { asyncWave } from 'async-wave';
 
@@ -89,5 +91,3 @@ asyncWave<GithubUser>([USER_NAME, getGithubUser, loadJson], {
 ### Return Value
 
 체인에서 마지막 프로미스의 결과를 반환하는 Promise 객체입니다.
-
-

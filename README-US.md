@@ -42,6 +42,7 @@ Using unpkg CDN:
 # Usage
 
 ### Before
+
 ```ts
 // Promises chaining
 await setFetchLog();
@@ -55,6 +56,7 @@ getGithubUser(USER_NAME)
 ```
 
 ### After
+
 ```typescript
 import { asyncWave } from 'async-wave';
 
@@ -78,6 +80,7 @@ asyncWave<GithubUser>([USER_NAME, getGithubUser, loadJson], {
 ```
 
 ### Parameters
+
 - callbacks: An array of callback functions to be executed in the then method. (**Note: If a function is passed as the first argument and its return value is not a promise, an error will be thrown.**)
 - option (optional): An optional object that provides the following callback functions:
   - onBefore: A function that runs before the promise starts. This function must be passed to the async function.
