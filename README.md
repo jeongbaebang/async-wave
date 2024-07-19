@@ -36,7 +36,7 @@ $ yarn add async-wave
 Using unpkg CDN:
 
 ```html
-<script src="https://unpkg.com/async-wave@{{VERSION}}/dist/index.js"></script>
+<script src="https://unpkg.com/async-wave@{{VERSION}}/dist/bundle.js"></script>
 ```
 
 ## Usage
