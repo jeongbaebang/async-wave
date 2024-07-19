@@ -5,6 +5,7 @@ import {
   createOn,
   createPromiseRecursiveFn,
   nextPromise,
+  PromiseCircularityError,
   promisify,
 } from '../utils';
 import { asyncWave } from '../core';
@@ -133,6 +134,9 @@ describe('asyncWave()', () => {
   const throwError = () => {
     throw new Error('new Error');
   };
+  const throwText = () => {
+    throw 'Error';
+  };
 
   test('항상 프로미스를 반환해야 한다.', () => {
     expect(isPromise(asyncWave([10, fn1, fn2]))).toBeTruthy();
@@ -242,6 +246,17 @@ describe('asyncWave()', () => {
         asyncWave<number>([10, throwError, fn1], {
           onError: (error) => {
             expect(error instanceof Error).toBeTruthy();
+          },
+          onSuccess: () => {
+            mockOnSuccessFn();
+          },
+        });
+
+        expect(mockOnSuccessFn).not.toBeCalled();
+
+        asyncWave<number>([10, throwText, fn1], {
+          onError: (error) => {
+            expect(error instanceof PromiseCircularityError).toBeTruthy();
           },
           onSuccess: () => {
             mockOnSuccessFn();
