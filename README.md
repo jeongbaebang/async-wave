@@ -57,6 +57,8 @@ getGithubUser(USER_NAME)
 
 ### After
 
+#### 전통적인 방식 (Traditional API)
+
 ```typescript
 import { asyncWave } from 'async-wave';
 
@@ -77,6 +79,50 @@ asyncWave<GithubUser>([USER_NAME, getGithubUser, loadJson], {
     endLoadingIndicator();
   },
 });
+```
+
+#### 새로운 방식 (Method Chaining API) ✨ NEW!
+
+```typescript
+import { asyncWave } from 'async-wave';
+
+// 메서드 체이닝으로 더 직관적이고 간결하게!
+asyncWave
+  .from(USER_NAME)
+  .before(async () => {
+    await setFetchLog();
+    startLoadingIndicator();
+  })
+  .then(getGithubUser)
+  .then(loadJson)
+  .then(async (githubUser) => {
+    await showAvatar(githubUser);
+    console.log(`avatar_url: ${githubUser.avatar_url}`);
+  })
+  .catch((error) => console.error(error))
+  .finally(() => endLoadingIndicator())
+  .execute();
+```
+
+#### 더 간단한 예제
+
+```typescript
+// Promise처럼 자연스럽게!
+const result = await asyncWave
+  .from(10)
+  .then(x => x + 5)
+  .then(x => x * 2)
+  .execute();
+
+console.log(result); // 30
+
+// 여러 함수를 한 번에 연결
+asyncWave
+  .from(initialValue)
+  .pipe(fn1, fn2, fn3)
+  .onSuccess(result => console.log('Success:', result))
+  .onError(error => console.error('Error:', error))
+  .execute();
 ```
 
 ### Parameters

@@ -26,7 +26,9 @@ export const createOn = {
   success<T>(onSuccess?: OnSuccess<T>) {
     return (received: T) => {
       if (onSuccess) {
-        return onSuccess(clonedeep(received));
+        const result = onSuccess(clonedeep(received));
+        // If onSuccess returns a value, use it; otherwise use received
+        return result !== undefined ? result : clonedeep(received);
       }
 
       return clonedeep(received);

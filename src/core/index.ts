@@ -2,6 +2,7 @@ import clonedeep from 'lodash.clonedeep';
 
 import type { CallbackFns, Options } from '../@types';
 import { createOn, createPromiseRecursiveFn, promisify } from '../utils';
+import { AsyncWaveBuilder } from '../builder';
 
 /**
  * @see https://github.com/jeongbaebang/async-wave
@@ -10,6 +11,7 @@ import { createOn, createPromiseRecursiveFn, promisify } from '../utils';
  * @returns `Promise` object.
  * @example
  * ```typescript
+ * // Traditional usage
  * asyncWave([placeId, getPlaceDetailResult, createAddress], {
  *   onError: () => {
  *     return mapErrorHandler(location, ErrorType.network);
@@ -18,6 +20,14 @@ import { createOn, createPromiseRecursiveFn, promisify } from '../utils';
  *     cache.set(data.place_id, data);
  *   },
  * });
+ *
+ * // Method chaining usage
+ * asyncWave.from(placeId)
+ *   .then(getPlaceDetailResult)
+ *   .then(createAddress)
+ *   .onSuccess(data => cache.set(data.place_id, data))
+ *   .onError(() => mapErrorHandler(location, ErrorType.network))
+ *   .execute();
  * ```
  */
 
@@ -61,6 +71,39 @@ async function asyncWave<R>(
     .then(onSuccess)
     .catch(onError)
     .finally(onSettled) as Promise<R>;
+}
+
+// Add static method for builder pattern
+namespace asyncWave {
+  /**
+   * Create a new AsyncWaveBuilder with the given initial value
+   * @param value - The initial value to start the chain (can be a value, Promise, or function)
+   * @returns A new AsyncWaveBuilder instance
+   * @example
+   * ```typescript
+   * asyncWave.from(10)
+   *   .then(x => x + 5)
+   *   .then(x => x * 2)
+   *   .onSuccess(result => console.log(result))
+   *   .execute();
+   * ```
+   */
+  export function from<T>(
+    value: T | Promise<T> | (() => T) | (() => Promise<T>),
+  ): AsyncWaveBuilder<T> {
+    return new AsyncWaveBuilder<T>(value);
+  }
+
+  /**
+   * Alias for from() - create a new AsyncWaveBuilder
+   * @param value - The initial value to start the chain (can be a value, Promise, or function)
+   * @returns A new AsyncWaveBuilder instance
+   */
+  export function of<T>(
+    value: T | Promise<T> | (() => T) | (() => Promise<T>),
+  ): AsyncWaveBuilder<T> {
+    return new AsyncWaveBuilder<T>(value);
+  }
 }
 
 export { asyncWave };
