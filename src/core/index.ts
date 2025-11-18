@@ -104,6 +104,32 @@ namespace asyncWave {
   ): AsyncWaveBuilder<T> {
     return new AsyncWaveBuilder<T>(value);
   }
+
+  /**
+   * Execute multiple promises in parallel
+   * @param promises - Array of promises or values to execute in parallel
+   * @returns Promise that resolves with array of results
+   * @example
+   * ```typescript
+   * const [user, posts, comments] = await asyncWave.parallel([
+   *   fetchUser(userId),
+   *   fetchPosts(userId),
+   *   fetchComments(userId)
+   * ])
+   * ```
+   */
+  export function parallel<T extends readonly unknown[]>(
+    promises: T,
+  ): Promise<import('../@types').ParallelResult<T>> {
+    return AsyncWaveBuilder.parallel(promises);
+  }
+
+  /**
+   * Clear the global cache
+   */
+  export function clearCache(): void {
+    AsyncWaveBuilder.clearCache();
+  }
 }
 
 export { asyncWave };

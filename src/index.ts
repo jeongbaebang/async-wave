@@ -5,11 +5,20 @@ export type {
   AsyncChainFunction,
   UnwrapPromise,
   ReturnTypeOf,
+  RetryOptions,
+  RetryStrategy,
+  CacheOptions,
+  ParallelResult,
+  Predicate,
+  TapFunction,
 } from './@types';
 
-// Class exports
+// Error class exports
 export { PromiseCircularityError } from './utils';
+export { TimeoutError, AbortError } from './builder';
+
+// Builder class export
 export { AsyncWaveBuilder } from './builder';
 
-// Main function export (with static methods from, of)
+// Main function export (with static methods from, of, parallel)
 export { asyncWave } from './core';

@@ -106,6 +106,7 @@ export function createPromiseRecursiveFn<R>(callbackFns: CallbackFns) {
       nextPromise(promise, fns[currentIndex]).catch((error: unknown) => {
         throw new PromiseCircularityError(
           error instanceof Error ? error.message : 'Promise Circularity Error',
+          error,
         );
       }),
       nextIndex(currentIndex),
@@ -114,10 +115,22 @@ export function createPromiseRecursiveFn<R>(callbackFns: CallbackFns) {
 }
 
 export class PromiseCircularityError extends Error {
-  constructor(message: string) {
+  public readonly originalError?: any;
+
+  constructor(message: string, originalError?: any) {
     super(message);
     this.message = message;
     this.name = 'PromiseCircularityError';
+    this.originalError = originalError;
+
+    // Preserve properties from original error
+    if (originalError && typeof originalError === 'object') {
+      Object.keys(originalError).forEach((key) => {
+        if (key !== 'name' && key !== 'message' && key !== 'stack') {
+          (this as any)[key] = originalError[key];
+        }
+      });
+    }
   }
 }
 
